@@ -5,6 +5,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,10 +19,12 @@ namespace Elki
     {
         private static System.Timers.Timer aTimerElki;
         private static System.Timers.Timer aTimerBD;
+        private static System.Timers.Timer aTimerClock;
         private static string[] dataElki;
         private static List<Employee> employees = new List<Employee>();
         private static decimal lists = 0;
         private static decimal Whichlist = 1;
+       
 
 
         static void Main(string[] args)
@@ -49,8 +52,8 @@ namespace Elki
                 id++;
             }
 
-            // Запускаем таймеры в двух потоках
-            Thread t1, t2;
+            // Запускаем таймеры в трех потоках
+            Thread t1, t2, t3;
 
             t1 = new Thread(e =>
             {
@@ -67,6 +70,13 @@ namespace Elki
                 aTimerBD.Dispose();
             });
             t2.Start();
+            
+            t3 = new Thread(e => { SetTimerClock(); 
+                Console.ReadLine();
+                aTimerClock.Stop();
+                aTimerClock.Dispose();
+            });
+            t3.Start();
         }
 
         // Конвертирует время из DateTime в Double
@@ -94,6 +104,22 @@ namespace Elki
         }
 
         // Событие, срабатывающее при тике таймера
+        private static void OnTimedEventClock(Object source, ElapsedEventArgs e)
+        {
+            Clock();
+        }
+
+        private static void SetTimerClock()
+        {
+            // Create a timer with a two second interval.
+            aTimerClock = new System.Timers.Timer(1000);
+            // Hook up the Elapsed event for the timer. 
+            aTimerClock.Elapsed += OnTimedEventClock;
+            aTimerClock.AutoReset = true;
+            aTimerClock.Enabled = true;
+        }
+
+        // Событие, срабатывающее при тике таймера
         private static void OnTimedEventBD(Object source, ElapsedEventArgs e)
         {
             birthday();
@@ -109,6 +135,9 @@ namespace Elki
             aTimerBD.Enabled = true;
         }
 
+        /// <summary>
+        /// Функция формирует электрички
+        /// </summary>
         private static void elki()
         {
             // считываем массив времен отправления электричек и переводим их в числа с плавающей точкой
@@ -200,6 +229,9 @@ namespace Elki
 
         }
 
+        /// <summary>
+        /// Фукция формирует дни рождения
+        /// </summary>
         private static void birthday()
         {
             int numOfLists = 4; // Количество имен на листе
@@ -249,14 +281,7 @@ namespace Elki
 
                 // рисуем иконку
                 g.DrawImage(newImage, 0, 0, 362, 512);
-
-                // рисуем линии
-                //g.DrawLine(ePen, 78, 34, 160, 34);
-                //g.DrawLine(ePen, 78, 68, 160, 68);
-
-                //Рисуем вычесленные времена отправления электричек
-                //g.DrawString("Hello World", drawFont1, drawBrush, 87, 7, drawFormat);
-                //g.DrawString("Hello World", drawFont1, drawBrush, 87, 70, drawFormat);
+               
                 g.DrawString("Наши именинники", drawFont2, drawBrush, 30, 33, drawFormat);
 
                 int index = 1;
@@ -288,6 +313,87 @@ namespace Elki
             else Whichlist++;
             Console.WriteLine(Whichlist);
         }
+
+        private static void Clock()
+        {
+            int xCenter = 180;
+            int yCenter = 130;
+            int delta = 205;
+
+
+            int r = 80;
+
+            int second = DateTime.Now.Second;
+            int minute = DateTime.Now.Minute;
+            int hour = DateTime.Now.Hour;
+
+            int secondAngle = second * 6 - 90;
+            int minuteAngle = minute * 6 - 90;
+            int hourAngleOx = (int)(Math.Round((hour - 8 + minute/60.0) * 30) - 90);
+            int hourAngleBur = (int)(Math.Round((hour - 2 + minute / 60.0) * 30) - 90);
+
+            Bitmap b = new Bitmap(345, 422);
+            using (Graphics g = Graphics.FromImage(b))
+            {
+                g.Clear(Color.White);
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+
+                SolidBrush drawBrush = new SolidBrush(Color.DarkBlue);
+                Font drawFont1 = new Font("Arial", 16, FontStyle.Bold);
+                Font drawFont2 = new Font("Arial", 12);
+                StringFormat drawFormat = new StringFormat();
+
+                g.DrawString("IPG Photonics", drawFont1, drawBrush, 100, 5, drawFormat);
+                g.DrawString("Оксфорд, США", drawFont2, drawBrush, 120, 25, drawFormat);
+
+                g.DrawString("IPG Laser", drawFont1, drawBrush, 120, 213, drawFormat);
+                g.DrawString("Бурбах, Германия", drawFont2, drawBrush, 100, 233, drawFormat);
+
+
+                Image newImage = Image.FromFile("clock.png");
+                g.DrawImage(newImage, xCenter - r, yCenter - r, r*2, r*2);
+                g.DrawImage(newImage, xCenter - r, yCenter - r + delta, r*2, r*2);
+
+                g.DrawEllipse(new Pen(Color.Black, 6), xCenter - 3, yCenter - 3, 6, 6);
+
+                
+                /* Минутная стрелка */
+                g.DrawLine(new Pen(Color.Black, 4), new Point(xCenter, yCenter),
+                    new Point((int) ((r * 0.7) * Math.Cos(minuteAngle * Math.PI / 180) + xCenter),
+                        (int) ((r * 0.7) * Math.Sin(minuteAngle * Math.PI / 180) + yCenter)));
+                /* Часовая стрелка */
+                g.DrawLine(new Pen(Color.Black, 6), new Point(xCenter, yCenter),
+                    new Point((int) ((r * 0.55) * Math.Cos(hourAngleOx * Math.PI / 180) + xCenter),
+                        (int) ((r * 0.55) * Math.Sin(hourAngleOx * Math.PI / 180) + yCenter)));
+                /* Стрелка секундная */
+                g.DrawLine(new Pen(Color.OrangeRed, 2), new Point(xCenter, yCenter),
+                    new Point((int)((r * 0.75) * Math.Cos(secondAngle * Math.PI / 180) + xCenter),
+                        (int)((r * 0.75) * Math.Sin(secondAngle * Math.PI / 180) + yCenter)));
+
+
+                g.DrawEllipse(new Pen(Color.Black, 6), xCenter - 5, yCenter - 5 + delta, 6, 6);
+                
+                /* Минутная стрелка */
+                g.DrawLine(new Pen(Color.Black, 4), new Point(xCenter, yCenter + delta),
+                    new Point((int) ((r * 0.7) * Math.Cos(minuteAngle * Math.PI / 180) + xCenter),
+                        (int) ((r * 0.7) * Math.Sin(minuteAngle * Math.PI / 180) + yCenter + delta)));
+                /* Часовая стрелка */
+                g.DrawLine(new Pen(Color.Black, 6), new Point(xCenter, yCenter + delta),
+                    new Point((int) ((r * 0.55) * Math.Cos(hourAngleBur * Math.PI / 180) + xCenter),
+                        (int) ((r * 0.55) * Math.Sin(hourAngleBur * Math.PI / 180) + yCenter + delta)));
+                /* Стрелка секундная */
+                g.DrawLine(new Pen(Color.OrangeRed, 2), new Point(xCenter, yCenter + delta),
+                    new Point((int)((r * 0.75) * Math.Cos(secondAngle * Math.PI / 180) + xCenter),
+                        (int)((r * 0.75) * Math.Sin(secondAngle * Math.PI / 180) + yCenter + delta)));
+
+            }
+
+            b.Save(@"clock1.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+            b.Save(@"clock2.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+
+
+        }
+
 
     }
 }
