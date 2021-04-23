@@ -1,4 +1,5 @@
 ﻿using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -33,6 +34,21 @@ namespace Elki
             Console.WriteLine("Start programm in " + DateTime.Now);
 
             dataElki = File.ReadAllLines("data.txt");
+
+            //// Переформируем файл с договорняками
+            //var dp = new FileWork("dp.xlsx");
+            //List<Employee> empDp = new List<Employee>();
+            //for (int i = 0; i < dp.Rows.Count; i += 4)
+            //{
+            //    empDp.Add(new Employee()
+            //    {
+            //        Name = dp.Rows[i].Cells[0].ToString(),
+            //        DateOfBirth = dp.Rows[i+1].Cells[0].ToString()
+            //    }); 
+            //}
+
+            // SaveData("wd.xlsx", empDp);
+
 
             // считываем из файла данные по дням рождения сотрудников
             var fw = new FileWork("emp.xlsx");
@@ -128,7 +144,7 @@ namespace Elki
         private static void SetTimerBD()
         {
             // Create a timer with a two second interval.
-            aTimerBD = new System.Timers.Timer(5000);
+            aTimerBD = new System.Timers.Timer(6000);
             // Hook up the Elapsed event for the timer. 
             aTimerBD.Elapsed += OnTimedEventBD;
             aTimerBD.AutoReset = true;
@@ -316,12 +332,12 @@ namespace Elki
 
         private static void Clock()
         {
-            int xCenter = 180;
-            int yCenter = 130;
-            int delta = 205;
+            int xCenter = 233;
+            int yCenter = 111;
+            int delta = 197;
 
 
-            int r = 80;
+            int r = 100;
 
             int second = DateTime.Now.Second;
             int minute = DateTime.Now.Minute;
@@ -343,16 +359,16 @@ namespace Elki
                 Font drawFont2 = new Font("Arial", 12);
                 StringFormat drawFormat = new StringFormat();
 
-                g.DrawString("IPG Photonics", drawFont1, drawBrush, 100, 5, drawFormat);
-                g.DrawString("Оксфорд, США", drawFont2, drawBrush, 120, 25, drawFormat);
+                //g.DrawString("IPG Photonics", drawFont1, drawBrush, 100, 5, drawFormat);
+                //g.DrawString("Оксфорд, США", drawFont2, drawBrush, 120, 25, drawFormat);
 
-                g.DrawString("IPG Laser", drawFont1, drawBrush, 120, 213, drawFormat);
-                g.DrawString("Бурбах, Германия", drawFont2, drawBrush, 100, 233, drawFormat);
+                //g.DrawString("IPG Laser", drawFont1, drawBrush, 120, 213, drawFormat);
+                //g.DrawString("Бурбах, Германия", drawFont2, drawBrush, 100, 233, drawFormat);
 
 
                 Image newImage = Image.FromFile("clock.png");
-                g.DrawImage(newImage, xCenter - r, yCenter - r, r*2, r*2);
-                g.DrawImage(newImage, xCenter - r, yCenter - r + delta, r*2, r*2);
+                g.DrawImage(newImage, 0, 0, 345, 422);
+                
 
                 g.DrawEllipse(new Pen(Color.Black, 6), xCenter - 3, yCenter - 3, 6, 6);
 
@@ -362,25 +378,25 @@ namespace Elki
                     new Point((int) ((r * 0.7) * Math.Cos(minuteAngle * Math.PI / 180) + xCenter),
                         (int) ((r * 0.7) * Math.Sin(minuteAngle * Math.PI / 180) + yCenter)));
                 /* Часовая стрелка */
-                g.DrawLine(new Pen(Color.Black, 6), new Point(xCenter, yCenter),
-                    new Point((int) ((r * 0.55) * Math.Cos(hourAngleOx * Math.PI / 180) + xCenter),
-                        (int) ((r * 0.55) * Math.Sin(hourAngleOx * Math.PI / 180) + yCenter)));
+                g.DrawLine(new Pen(Color.Black, 8), new Point(xCenter, yCenter),
+                    new Point((int) ((r * 0.50) * Math.Cos(hourAngleOx * Math.PI / 180) + xCenter),
+                        (int) ((r * 0.50) * Math.Sin(hourAngleOx * Math.PI / 180) + yCenter)));
                 /* Стрелка секундная */
                 g.DrawLine(new Pen(Color.OrangeRed, 2), new Point(xCenter, yCenter),
                     new Point((int)((r * 0.75) * Math.Cos(secondAngle * Math.PI / 180) + xCenter),
                         (int)((r * 0.75) * Math.Sin(secondAngle * Math.PI / 180) + yCenter)));
 
 
-                g.DrawEllipse(new Pen(Color.Black, 6), xCenter - 5, yCenter - 5 + delta, 6, 6);
+                g.DrawEllipse(new Pen(Color.Black, 6), xCenter - 3, yCenter - 3 + delta, 6, 6);
                 
                 /* Минутная стрелка */
                 g.DrawLine(new Pen(Color.Black, 4), new Point(xCenter, yCenter + delta),
                     new Point((int) ((r * 0.7) * Math.Cos(minuteAngle * Math.PI / 180) + xCenter),
                         (int) ((r * 0.7) * Math.Sin(minuteAngle * Math.PI / 180) + yCenter + delta)));
                 /* Часовая стрелка */
-                g.DrawLine(new Pen(Color.Black, 6), new Point(xCenter, yCenter + delta),
-                    new Point((int) ((r * 0.55) * Math.Cos(hourAngleBur * Math.PI / 180) + xCenter),
-                        (int) ((r * 0.55) * Math.Sin(hourAngleBur * Math.PI / 180) + yCenter + delta)));
+                g.DrawLine(new Pen(Color.Black, 8), new Point(xCenter, yCenter + delta),
+                    new Point((int) ((r * 0.50) * Math.Cos(hourAngleBur * Math.PI / 180) + xCenter),
+                        (int) ((r * 0.50) * Math.Sin(hourAngleBur * Math.PI / 180) + yCenter + delta)));
                 /* Стрелка секундная */
                 g.DrawLine(new Pen(Color.OrangeRed, 2), new Point(xCenter, yCenter + delta),
                     new Point((int)((r * 0.75) * Math.Cos(secondAngle * Math.PI / 180) + xCenter),
@@ -392,6 +408,44 @@ namespace Elki
             b.Save(@"clock2.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
 
 
+        }
+
+        
+        public static void SaveData(string fileName, List<Employee> emp)
+        {
+            //Рабочая книга Excel
+            XSSFWorkbook wb;
+            //Лист в книге Excel
+            XSSFSheet sh;
+
+            //Создаем рабочую книгу
+            wb = new XSSFWorkbook();
+            //Создаём лист в книге
+            sh = (XSSFSheet)wb.CreateSheet("Лист 1");
+
+            // Текущая строка
+            int row = 0;
+
+            foreach (var item in emp)
+            {
+                //Создаем строку
+                var currentRow = sh.CreateRow(row);
+                currentRow.CreateCell(0).SetCellValue(item.Name);
+                currentRow.CreateCell(1).SetCellValue(item.DateOfBirth);
+                row++;
+            }
+
+            // Удалим файл если он есть уже
+            if (!File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
+
+            //запишем всё в файл
+            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            {
+                wb.Write(fs);
+            }            
         }
 
 
