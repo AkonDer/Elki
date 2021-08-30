@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Elki
+﻿namespace Elki
 {
-    class Employee
+    internal class Employee
     {
+        public string DateOfBirth;
         public int Id;
         public string Name;
-        public string DateOfBirth;
     }
 }

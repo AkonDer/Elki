@@ -1,39 +1,34 @@
-﻿using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Timers;
-
+using NPOI.XSSF.UserModel;
+using Timer = System.Timers.Timer;
 
 namespace Elki
 {
-    class Program
+    internal class Program
     {
-        private static System.Timers.Timer aTimerElki;
-        private static System.Timers.Timer aTimerBD;
-        private static System.Timers.Timer aTimerClock;
-        private static string[] dataElki;
-        private static List<Employee> employees = new List<Employee>();
-        private static decimal lists = 0;
-        private static decimal Whichlist = 1;
-       
+        private static Timer _aTimerElki;
+        private static Timer _aTimerBd;
+        private static Timer _aTimerClock;
+        private static string[] _dataElki;
+        private static readonly List<Employee> Employees = new List<Employee>();
+        private static decimal _lists;
+        private static decimal _whichlist = 1;
 
 
-        static void Main(string[] args)
+        private static void Main()
         {
             // start pogram
             Console.WriteLine("Start programm in " + DateTime.Now);
 
-            dataElki = File.ReadAllLines("data.txt");
+            _dataElki = File.ReadAllLines("data.txt");
 
             //// Переформируем файл с договорняками
             //var dp = new FileWork("dp.xlsx");
@@ -52,17 +47,17 @@ namespace Elki
 
             // считываем из файла данные по дням рождения сотрудников
             var fw = new FileWork("emp.xlsx");
-            
+
             // Создаем List сотрудников для последующего простого поиска соответствий дню рождений в нем и помещаем в глобальный List
-            int id = 0;
+            var id = 0;
             foreach (var item in fw.Rows)
             {
-                employees.Add(new Employee()
+                Employees.Add(new Employee
                 {
                     Id = id,
                     Name = item.Cells[0].ToString().Trim() + " " +
-                            item.Cells[1].ToString().Trim() + " " +
-                            item.Cells[2].ToString().Trim(),
+                           item.Cells[1].ToString().Trim() + " " +
+                           item.Cells[2].ToString().Trim(),
                     DateOfBirth = item.Cells[3].ToString()
                 });
                 id++;
@@ -75,22 +70,26 @@ namespace Elki
             {
                 SetTimerElki();
                 Console.ReadLine();
-                aTimerElki.Stop();
-                aTimerElki.Dispose();
+                _aTimerElki.Stop();
+                _aTimerElki.Dispose();
             });
             t1.Start();
 
-            t2 = new Thread(e => { SetTimerBD(); 
+            t2 = new Thread(e =>
+            {
+                SetTimerBd();
                 Console.ReadLine();
-                aTimerBD.Stop();
-                aTimerBD.Dispose();
+                _aTimerBd.Stop();
+                _aTimerBd.Dispose();
             });
             t2.Start();
-            
-            t3 = new Thread(e => { SetTimerClock(); 
+
+            t3 = new Thread(e =>
+            {
+                SetTimerClock();
                 Console.ReadLine();
-                aTimerClock.Stop();
-                aTimerClock.Dispose();
+                _aTimerClock.Stop();
+                _aTimerClock.Dispose();
             });
             t3.Start();
         }
@@ -100,11 +99,11 @@ namespace Elki
         {
             return dt.Hour + Convert.ToDouble(dt.Minute) / 60;
         }
-       
+
         // Событие, срабатывающее при тике таймера
-        private static void OnTimedEventElki(Object source, ElapsedEventArgs e)
+        private static void OnTimedEventElki(object source, ElapsedEventArgs e)
         {
-            elki();
+            Elki();
             Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}",
                 e.SignalTime);
         }
@@ -112,15 +111,15 @@ namespace Elki
         private static void SetTimerElki()
         {
             // Create a timer with a two second interval.
-            aTimerElki = new System.Timers.Timer(2000);
+            _aTimerElki = new Timer(2000);
             // Hook up the Elapsed event for the timer. 
-            aTimerElki.Elapsed += OnTimedEventElki;
-            aTimerElki.AutoReset = true;
-            aTimerElki.Enabled = true;
+            _aTimerElki.Elapsed += OnTimedEventElki;
+            _aTimerElki.AutoReset = true;
+            _aTimerElki.Enabled = true;
         }
 
         // Событие, срабатывающее при тике таймера
-        private static void OnTimedEventClock(Object source, ElapsedEventArgs e)
+        private static void OnTimedEventClock(object source, ElapsedEventArgs e)
         {
             Clock();
         }
@@ -128,61 +127,60 @@ namespace Elki
         private static void SetTimerClock()
         {
             // Create a timer with a two second interval.
-            aTimerClock = new System.Timers.Timer(1000);
+            _aTimerClock = new Timer(1000);
             // Hook up the Elapsed event for the timer. 
-            aTimerClock.Elapsed += OnTimedEventClock;
-            aTimerClock.AutoReset = true;
-            aTimerClock.Enabled = true;
+            _aTimerClock.Elapsed += OnTimedEventClock;
+            _aTimerClock.AutoReset = true;
+            _aTimerClock.Enabled = true;
         }
 
         // Событие, срабатывающее при тике таймера
-        private static void OnTimedEventBD(Object source, ElapsedEventArgs e)
+        private static void OnTimedEventBD(object source, ElapsedEventArgs e)
         {
-            birthday();
+            Birthday();
         }
 
-        private static void SetTimerBD()
+        private static void SetTimerBd()
         {
             // Create a timer with a two second interval.
-            aTimerBD = new System.Timers.Timer(6000);
+            _aTimerBd = new Timer(6000);
             // Hook up the Elapsed event for the timer. 
-            aTimerBD.Elapsed += OnTimedEventBD;
-            aTimerBD.AutoReset = true;
-            aTimerBD.Enabled = true;
+            _aTimerBd.Elapsed += OnTimedEventBD;
+            _aTimerBd.AutoReset = true;
+            _aTimerBd.Enabled = true;
         }
 
         /// <summary>
-        /// Функция формирует электрички
+        ///     Функция формирует электрички
         /// </summary>
-        private static void elki()
+        private static void Elki()
         {
             // считываем массив времен отправления электричек и переводим их в числа с плавающей точкой
-            var timesElki = dataElki;
+            var timesElki = _dataElki;
 
             double timeNow;
-            string time1 = "";
-            string time2 = "";
-            string time3 = "";
+            var time1 = "";
+            var time2 = "";
+            var time3 = "";
 
             double time;
 
-            Bitmap b = new Bitmap(170, 100);
-            using (Graphics g = Graphics.FromImage(b))
+            var b = new Bitmap(170, 100);
+            using (var g = Graphics.FromImage(b))
             {
-
                 // Create fonts and brush.
-                SolidBrush drawBrush = new SolidBrush(Color.DarkBlue);
-                Font drawFont1 = new Font("Arial", 18);
-                Font drawFont2 = new Font("Arial", 24, FontStyle.Bold);
+                var drawBrush = new SolidBrush(Color.DarkBlue);
+                var drawFont1 = new Font("Arial", 18);
+                var drawFont2 = new Font("Arial", 24, FontStyle.Bold);
 
                 // Set format of string.
-                StringFormat drawFormat = new StringFormat();
+                var drawFormat = new StringFormat();
 
                 // Рисуем линии
-                Pen ePen = new Pen(Color.DarkBlue, 1);
+                var ePen = new Pen(Color.DarkBlue, 1);
 
                 // Вставляем картинку
-                Image newImage = Image.FromFile("icon.png");
+                var newImage = Image.FromFile("icon.png");
 
                 int i;
 
@@ -191,7 +189,6 @@ namespace Elki
 
                 for (i = 0; i < timesElki.Length; i++)
                 {
-
                     // Если текущее время меньше минимального за день
                     if (i == 0)
                     {
@@ -213,7 +210,7 @@ namespace Elki
                     }
 
                     time = ConvertTimeToDouble(Convert.ToDateTime(time2));
-                    if ((time - timeNow) >= 0) break;
+                    if (time - timeNow >= 0) break;
                 }
 
                 // Если текущее время больше максимального в расписании за день
@@ -239,125 +236,122 @@ namespace Elki
 
                 g.DrawString(time2, drawFont2, drawBrush, 72, 33, drawFormat);
 
-                b.Save(@"timeelki.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                b.Save(@"timeelki2.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                b.Save(@"timeelki.bmp", ImageFormat.Bmp);
+                b.Save(@"timeelki2.bmp", ImageFormat.Bmp);
             }
-
         }
 
         /// <summary>
-        /// Фукция формирует дни рождения
+        ///     Фукция формирует дни рождения
         /// </summary>
-        private static void birthday()
+        private static void Birthday()
         {
-            int numOfLists = 4; // Количество имен на листе
+            var numOfLists = 4; // Количество имен на листе
 
-            string dataNow = DateTime.Now.ToString("dd.MM");
+            var dataNow = DateTime.Now.ToString("dd.MM");
             //string dataNow = "26.12";
 
             // Ищем всех людей с соответствующим днем рождения
-            var emp = employees.Where(e => e.DateOfBirth.Contains(dataNow));
-            string[] ebd = new string[50];
+            var emp = Employees.Where(e => e.DateOfBirth.Contains(dataNow));
+            var ebd = new string[50];
 
-            int a = 0;
-            foreach (var item in emp)
+            var a = 0;
+            var enumerable = emp.ToList();
+            foreach (var item in enumerable)
             {
                 ebd[a] = item.Name;
                 a++;
             }
 
-            lists = Math.Ceiling((decimal) (emp.ToList().Count / (decimal)numOfLists));
+            _lists = Math.Ceiling(enumerable.ToList().Count / (decimal)numOfLists);
 
-            int start = (int) (Whichlist * numOfLists - numOfLists);
-            int end = (emp.ToList().Count - Whichlist * numOfLists < 0)
-                ? (int)(Whichlist * numOfLists) - numOfLists + (int)emp.ToList().Count % numOfLists
-                : (int)Whichlist * numOfLists;
+            var start = (int)(_whichlist * numOfLists - numOfLists);
+            var end = enumerable.ToList().Count - _whichlist * numOfLists < 0
+                ? (int)(_whichlist * numOfLists) - numOfLists + enumerable.ToList().Count % numOfLists
+                : (int)_whichlist * numOfLists;
 
 
-            Bitmap b = new Bitmap(362, 512);
-            using (Graphics g = Graphics.FromImage(b))
+            var b = new Bitmap(362, 512);
+            using (var g = Graphics.FromImage(b))
             {
-
                 // Create fonts and brush.
-                SolidBrush drawBrush = new SolidBrush(Color.DarkRed);
-                Font drawFont1 = new Font("Arial", 18, FontStyle.Italic);
-                Font drawFont2 = new Font("Arial", 24, FontStyle.Bold);
+                var drawBrush = new SolidBrush(Color.DarkRed);
+                var drawFont1 = new Font("Arial", 18, FontStyle.Italic);
+                var drawFont2 = new Font("Arial", 24, FontStyle.Bold);
 
                 // Set format of string.
-                StringFormat drawFormat = new StringFormat();
+                var drawFormat = new StringFormat();
 
                 // Рисуем линии
-                Pen ePen = new Pen(Color.DarkBlue, 1);
+                //var ePen = new Pen(Color.DarkBlue, 1);
 
                 // Вставляем картинку
-                Image newImage = Image.FromFile("fon.jpg");
-               
+                var newImage = Image.FromFile("fon.jpg");
+
 
                 g.Clear(Color.White);
 
                 // рисуем иконку
                 g.DrawImage(newImage, 0, 0, 362, 512);
-               
+
                 g.DrawString("Наши именинники", drawFont2, drawBrush, 30, 33, drawFormat);
 
-                int index = 1;
-                for (int i = start; i < end; i++)
+                var index = 1;
+                for (var i = start; i < end; i++)
                 {
-                    string[] s = ebd[i].Split(' ');
-                    string s1 = $"{s[0]} {s[1]}";
-                    string s2 = $"     {s[2]}";
-                    g.DrawString(s1, drawFont1, drawBrush, 50, (index) * 55 + 45, drawFormat);
-                    g.DrawString(s2, drawFont1, drawBrush, 50, (index) * 55 + 67, drawFormat);
+                    var s = ebd[i].Split(' ');
+                    var s1 = $"{s[0]} {s[1]}";
+                    var s2 = $"     {s[2]}";
+                    g.DrawString(s1, drawFont1, drawBrush, 50, index * 55 + 45, drawFormat);
+                    g.DrawString(s2, drawFont1, drawBrush, 50, index * 55 + 67, drawFormat);
                     Console.WriteLine(ebd[i]);
                     index++;
                 }
 
-                Font drawFont3 = new Font("Arial", 20, FontStyle.Bold);
+                var drawFont3 = new Font("Arial", 20, FontStyle.Bold);
                 g.DrawString("Поздравляем", drawFont3, drawBrush, 33, 360, drawFormat);
                 g.DrawString("с днем", drawFont3, drawBrush, 33, 390, drawFormat);
                 g.DrawString("рождения!", drawFont3, drawBrush, 33, 420, drawFormat);
 
-                b.Save(@"bd1.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-                b.Save(@"bd2.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+                b.Save(@"bd1.bmp", ImageFormat.Bmp);
+                b.Save(@"bd2.bmp", ImageFormat.Bmp);
             }
 
 
-
-
             // Если это был последний лист то перейти снова к первому
-            if (Whichlist == lists) Whichlist = 1;
-            else Whichlist++;
-            Console.WriteLine(Whichlist);
+            if (_whichlist == _lists) _whichlist = 1;
+            else _whichlist++;
+            Console.WriteLine(_whichlist);
         }
 
         private static void Clock()
         {
-            int xCenter = 233;
-            int yCenter = 111;
-            int delta = 197;
+            var xCenter = 233;
+            var yCenter = 111;
+            var delta = 197;
 
 
-            int r = 100;
+            var r = 100;
 
-            int second = DateTime.Now.Second;
-            int minute = DateTime.Now.Minute;
-            int hour = DateTime.Now.Hour;
+            var second = DateTime.Now.Second;
+            var minute = DateTime.Now.Minute;
+            var hour = DateTime.Now.Hour;
 
-            int secondAngle = second * 6 - 90;
-            int minuteAngle = minute * 6 - 90;
-            int hourAngleOx = (int)(Math.Round((hour - 8 + minute/60.0) * 30) - 90);
-            int hourAngleBur = (int)(Math.Round((hour - 2 + minute / 60.0) * 30) - 90);
+            var secondAngle = second * 6 - 90;
+            var minuteAngle = minute * 6 - 90;
+            var hourAngleOx = (int)(Math.Round((hour - 7 + minute / 60.0) * 30) - 90);
+            var hourAngleBur = (int)(Math.Round((hour - 2 + minute / 60.0) * 30) - 90);
 
-            Bitmap b = new Bitmap(345, 422);
-            using (Graphics g = Graphics.FromImage(b))
+            var b = new Bitmap(345, 422);
+            using (var g = Graphics.FromImage(b))
             {
                 g.Clear(Color.White);
                 g.SmoothingMode = SmoothingMode.AntiAlias;
 
-                SolidBrush drawBrush = new SolidBrush(Color.DarkBlue);
-                Font drawFont1 = new Font("Arial", 16, FontStyle.Bold);
-                Font drawFont2 = new Font("Arial", 12);
-                StringFormat drawFormat = new StringFormat();
+                //var drawBrush = new SolidBrush(Color.DarkBlue);
+                //var drawFont1 = new Font("Arial", 16, FontStyle.Bold);
+                //var drawFont2 = new Font("Arial", 12);
+                //var drawFormat = new StringFormat();
 
                 //g.DrawString("IPG Photonics", drawFont1, drawBrush, 100, 5, drawFormat);
                 //g.DrawString("Оксфорд, США", drawFont2, drawBrush, 120, 25, drawFormat);
@@ -366,51 +360,48 @@ namespace Elki
                 //g.DrawString("Бурбах, Германия", drawFont2, drawBrush, 100, 233, drawFormat);
 
 
-                Image newImage = Image.FromFile("clock.png");
+                var newImage = Image.FromFile("clock.png");
                 g.DrawImage(newImage, 0, 0, 345, 422);
-                
+
 
                 g.DrawEllipse(new Pen(Color.Black, 6), xCenter - 3, yCenter - 3, 6, 6);
 
-                
+
                 /* Минутная стрелка */
                 g.DrawLine(new Pen(Color.Black, 4), new Point(xCenter, yCenter),
-                    new Point((int) ((r * 0.7) * Math.Cos(minuteAngle * Math.PI / 180) + xCenter),
-                        (int) ((r * 0.7) * Math.Sin(minuteAngle * Math.PI / 180) + yCenter)));
+                    new Point((int)(r * 0.7 * Math.Cos(minuteAngle * Math.PI / 180) + xCenter),
+                        (int)(r * 0.7 * Math.Sin(minuteAngle * Math.PI / 180) + yCenter)));
                 /* Часовая стрелка */
                 g.DrawLine(new Pen(Color.Black, 8), new Point(xCenter, yCenter),
-                    new Point((int) ((r * 0.50) * Math.Cos(hourAngleOx * Math.PI / 180) + xCenter),
-                        (int) ((r * 0.50) * Math.Sin(hourAngleOx * Math.PI / 180) + yCenter)));
+                    new Point((int)(r * 0.50 * Math.Cos(hourAngleOx * Math.PI / 180) + xCenter),
+                        (int)(r * 0.50 * Math.Sin(hourAngleOx * Math.PI / 180) + yCenter)));
                 /* Стрелка секундная */
                 g.DrawLine(new Pen(Color.OrangeRed, 2), new Point(xCenter, yCenter),
-                    new Point((int)((r * 0.75) * Math.Cos(secondAngle * Math.PI / 180) + xCenter),
-                        (int)((r * 0.75) * Math.Sin(secondAngle * Math.PI / 180) + yCenter)));
+                    new Point((int)(r * 0.75 * Math.Cos(secondAngle * Math.PI / 180) + xCenter),
+                        (int)(r * 0.75 * Math.Sin(secondAngle * Math.PI / 180) + yCenter)));
 
 
                 g.DrawEllipse(new Pen(Color.Black, 6), xCenter - 3, yCenter - 3 + delta, 6, 6);
-                
+
                 /* Минутная стрелка */
                 g.DrawLine(new Pen(Color.Black, 4), new Point(xCenter, yCenter + delta),
-                    new Point((int) ((r * 0.7) * Math.Cos(minuteAngle * Math.PI / 180) + xCenter),
-                        (int) ((r * 0.7) * Math.Sin(minuteAngle * Math.PI / 180) + yCenter + delta)));
+                    new Point((int)(r * 0.7 * Math.Cos(minuteAngle * Math.PI / 180) + xCenter),
+                        (int)(r * 0.7 * Math.Sin(minuteAngle * Math.PI / 180) + yCenter + delta)));
                 /* Часовая стрелка */
                 g.DrawLine(new Pen(Color.Black, 8), new Point(xCenter, yCenter + delta),
-                    new Point((int) ((r * 0.50) * Math.Cos(hourAngleBur * Math.PI / 180) + xCenter),
-                        (int) ((r * 0.50) * Math.Sin(hourAngleBur * Math.PI / 180) + yCenter + delta)));
+                    new Point((int)(r * 0.50 * Math.Cos(hourAngleBur * Math.PI / 180) + xCenter),
+                        (int)(r * 0.50 * Math.Sin(hourAngleBur * Math.PI / 180) + yCenter + delta)));
                 /* Стрелка секундная */
                 g.DrawLine(new Pen(Color.OrangeRed, 2), new Point(xCenter, yCenter + delta),
-                    new Point((int)((r * 0.75) * Math.Cos(secondAngle * Math.PI / 180) + xCenter),
-                        (int)((r * 0.75) * Math.Sin(secondAngle * Math.PI / 180) + yCenter + delta)));
-
+                    new Point((int)(r * 0.75 * Math.Cos(secondAngle * Math.PI / 180) + xCenter),
+                        (int)(r * 0.75 * Math.Sin(secondAngle * Math.PI / 180) + yCenter + delta)));
             }
 
-            b.Save(@"clock1.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-            b.Save(@"clock2.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
-
-
+            b.Save(@"clock1.bmp", ImageFormat.Bmp);
+            b.Save(@"clock2.bmp", ImageFormat.Bmp);
         }
 
-        
+
         public static void SaveData(string fileName, List<Employee> emp)
         {
             //Рабочая книга Excel
@@ -424,7 +415,7 @@ namespace Elki
             sh = (XSSFSheet)wb.CreateSheet("Лист 1");
 
             // Текущая строка
-            int row = 0;
+            var row = 0;
 
             foreach (var item in emp)
             {
@@ -436,18 +427,13 @@ namespace Elki
             }
 
             // Удалим файл если он есть уже
-            if (!File.Exists(fileName))
-            {
-                File.Delete(fileName);
-            }
+            if (!File.Exists(fileName)) File.Delete(fileName);
 
             //запишем всё в файл
             using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             {
                 wb.Write(fs);
-            }            
+            }
         }
-
-
     }
 }
