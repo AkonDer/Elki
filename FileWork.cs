@@ -10,7 +10,7 @@ namespace Elki
         /// <summary>
         ///     Путь к файлу
         /// </summary>
-        private readonly string _Path;
+        private readonly string _path;
 
         /// <summary>
         ///     Количество строк в файле
@@ -28,7 +28,7 @@ namespace Elki
         /// <param name="p">Имя файла в текущей дирректории</param>
         public FileWork(string p)
         {
-            _Path = p;
+            _path = p;
             GetRowsFromFile();
         }
 
@@ -41,7 +41,7 @@ namespace Elki
             XSSFWorkbook xssfwb;
 
             //Открываем файл
-            using (var file = new FileStream(_Path, FileMode.Open, FileAccess.Read))
+            using (var file = new FileStream(_path, FileMode.Open, FileAccess.Read))
             {
                 xssfwb = new XSSFWorkbook(file);
             }
