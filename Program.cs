@@ -23,6 +23,10 @@ namespace Elki
         private static decimal _whichlist = 1;
 
 
+        public Program()
+        {
+        }
+
         private static void Main()
         {
             // start pogram
@@ -359,7 +363,8 @@ namespace Elki
                 //g.DrawString("IPG Laser", drawFont1, drawBrush, 120, 213, drawFormat);
                 //g.DrawString("Бурбах, Германия", drawFont2, drawBrush, 100, 233, drawFormat);
 
-
+                
+                
                 var newImage = Image.FromFile("clock.png");
                 g.DrawImage(newImage, 0, 0, 345, 422);
 
