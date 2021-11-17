@@ -28,15 +28,7 @@ namespace Elki
         /// Какая дата сегодня
         /// </summary>
         public static string dataNow;
-
-
-
-
-        public Program()
-        {
-
-        }
-
+      
         private static void Main()
         {
             dataNow = DateTime.Now.ToString("dd.MM");
