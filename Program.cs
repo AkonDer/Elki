@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using NPOI.XSSF.UserModel;
 using Timer = System.Timers.Timer;
@@ -17,18 +18,30 @@ namespace Elki
         private static Timer _aTimerElki;
         private static Timer _aTimerBd;
         private static Timer _aTimerClock;
+        private static Timer _aTimerHolidays;
         private static string[] _dataElki;
         private static readonly List<Employee> Employees = new List<Employee>();
+        private static readonly List<Holiday> Holidays = new List<Holiday>();
         private static decimal _lists;
         private static decimal _whichlist = 1;
+        /// <summary>
+        /// Какая дата сегодня
+        /// </summary>
+        public static string dataNow;
+        
+
 
 
         public Program()
         {
+            
         }
 
         private static void Main()
         {
+            dataNow = DateTime.Now.ToString("dd.MM");
+            //string dataNow = "26.12";
+
             // start pogram
             Console.WriteLine("Start programm in " + DateTime.Now);
 
@@ -48,6 +61,20 @@ namespace Elki
 
             // SaveData("wd.xlsx", empDp);
 
+            // считываем данные из файла с праздниками
+            var fwHolidays = new FileWork("holidays.xlsx");
+
+            // Создаем список праздников для последующего поиска по нему
+            foreach (var hd in fwHolidays.Rows)
+            {
+                string HolyData = hd.Cells[0].ToString();
+                List<string> holday = new List<string>();
+                for (int i = 1; i < hd.Cells.Count; i++)
+                {               
+                    holday.Add(hd.Cells[i].ToString());                    
+                }
+                Holidays.Add(new Holiday { Date = HolyData, HolDays = holday });
+            }
 
             // считываем из файла данные по дням рождения сотрудников
             var fw = new FileWork("emp.xlsx");
@@ -66,9 +93,9 @@ namespace Elki
                 });
                 id++;
             }
-
+          
             // Запускаем таймеры в трех потоках
-            Thread t1, t2, t3;
+            Thread t1, t2, t3, t4;
 
             t1 = new Thread(e =>
             {
@@ -96,6 +123,15 @@ namespace Elki
                 _aTimerClock.Dispose();
             });
             t3.Start();
+
+            t4 = new Thread(e =>
+            {
+                SetTimerHolidays();
+                Console.ReadLine();
+                _aTimerClock.Stop();
+                _aTimerClock.Dispose();
+            });
+            t4.Start();
         }
 
         // Конвертирует время из DateTime в Double
@@ -107,9 +143,35 @@ namespace Elki
         // Событие, срабатывающее при тике таймера
         private static void OnTimedEventElki(object source, ElapsedEventArgs e)
         {
-            Elki();
-            Console.WriteLine("The Elapsed event was raised at {0:HH:mm:ss.fff}",
-                e.SignalTime);
+            Elki();            
+        }
+
+        // Событие, срабатывающее при тике таймера
+        private static void OnTimedEventClock(object source, ElapsedEventArgs e)
+        {
+            Clock();
+        }
+
+        // Событие, срабатывающее при тике таймера
+        private static void OnTimedEventBD(object source, ElapsedEventArgs e)
+        {
+            Birthday();
+        }
+
+        // Событие, срабатывающее при тике таймера
+        private static void OnTimedEventHolidays(object source, ElapsedEventArgs e)
+        {
+            Holydays();
+        }
+
+        private static void SetTimerHolidays()
+        {
+            // Create a timer with a two second interval.
+            _aTimerHolidays = new Timer(2000);
+            // Hook up the Elapsed event for the timer. 
+            _aTimerHolidays.Elapsed += OnTimedEventHolidays;
+            _aTimerHolidays.AutoReset = true;
+            _aTimerHolidays.Enabled = true;
         }
 
         private static void SetTimerElki()
@@ -120,13 +182,7 @@ namespace Elki
             _aTimerElki.Elapsed += OnTimedEventElki;
             _aTimerElki.AutoReset = true;
             _aTimerElki.Enabled = true;
-        }
-
-        // Событие, срабатывающее при тике таймера
-        private static void OnTimedEventClock(object source, ElapsedEventArgs e)
-        {
-            Clock();
-        }
+        }      
 
         private static void SetTimerClock()
         {
@@ -136,13 +192,7 @@ namespace Elki
             _aTimerClock.Elapsed += OnTimedEventClock;
             _aTimerClock.AutoReset = true;
             _aTimerClock.Enabled = true;
-        }
-
-        // Событие, срабатывающее при тике таймера
-        private static void OnTimedEventBD(object source, ElapsedEventArgs e)
-        {
-            Birthday();
-        }
+        }        
 
         private static void SetTimerBd()
         {
@@ -153,6 +203,7 @@ namespace Elki
             _aTimerBd.AutoReset = true;
             _aTimerBd.Enabled = true;
         }
+
 
         /// <summary>
         ///     Функция формирует электрички
@@ -241,19 +292,16 @@ namespace Elki
                 g.DrawString(time2, drawFont2, drawBrush, 72, 33, drawFormat);
 
                 b.Save(@"timeelki.bmp", ImageFormat.Bmp);
-                b.Save(@"timeelki2.bmp", ImageFormat.Bmp);
+                b.Save(@"timeelki2.bmp", ImageFormat.Bmp);               
             }
         }
-
+      
         /// <summary>
         ///     Фукция формирует дни рождения
         /// </summary>
         private static void Birthday()
-        {
-            var numOfLists = 4; // Количество имен на листе
-
-            var dataNow = DateTime.Now.ToString("dd.MM");
-            //string dataNow = "26.12";
+        {           
+            var numOfLists = 4; // Количество имен на листе            
 
             // Ищем всех людей с соответствующим днем рождения
             var emp = Employees.Where(e => e.DateOfBirth.Contains(dataNow));
@@ -326,8 +374,56 @@ namespace Elki
             if (_whichlist == _lists) _whichlist = 1;
             else _whichlist++;
             Console.WriteLine(_whichlist);
+
+            
         }
 
+        /// <summary>
+        ///  Формирует праздники
+        /// </summary>
+        private static void Holydays()
+        {
+            var holday = Holidays.FirstOrDefault(h => h.Date == dataNow);
+
+            var b = new Bitmap(362, 512);
+            using (var g = Graphics.FromImage(b))
+            {
+                // Create fonts and brush.
+                var drawBrush = new SolidBrush(Color.DarkRed);
+                var drawFont1 = new Font("Arial", 18, FontStyle.Italic);
+                var drawFont2 = new Font("Arial", 24, FontStyle.Bold);
+
+                // Set format of string.
+                var drawFormat = new StringFormat();
+
+                // Рисуем линии
+                //var ePen = new Pen(Color.DarkBlue, 1);
+
+                // Вставляем картинку
+                var newImage = Image.FromFile("fon.jpg");
+
+                g.Clear(Color.White);
+
+                // рисуем иконку
+                g.DrawImage(newImage, 0, 0, 362, 512);
+
+                foreach (var hd in holday.HolDays)
+                {
+                    g.DrawString(hd, drawFont1, drawBrush, 33, 50, drawFormat);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(hd);                    
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+
+                b.Save(@"hd1.bmp", ImageFormat.Bmp);
+                b.Save(@"hd2.bmp", ImageFormat.Bmp);
+
+            }
+        }
+
+        /// <summary>
+        ///  Формирует время в США и Германии
+        /// </summary>
         private static void Clock()
         {
             var xCenter = 233;
@@ -440,5 +536,26 @@ namespace Elki
                 wb.Write(fs);
             }
         }
+
+        static void Factorial()
+        {
+            int result = 1;
+            for (int i = 1; i <= 6; i++)
+            {
+                result *= i;
+            }
+            Thread.Sleep(8000);
+            Console.WriteLine($"Факториал равен {result}");
+        }
+
+        // определение асинхронного метода
+        static async void FactorialAsync()
+        {
+            Console.WriteLine("Начало метода FactorialAsync"); // выполняется синхронно
+            await Task.Run(() => Factorial());                // выполняется асинхронно
+            Console.WriteLine("Конец метода FactorialAsync");
+        }
     }
+
+    
 }
