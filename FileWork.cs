@@ -51,7 +51,7 @@ namespace Elki
             NumberOfLines = sheet.PhysicalNumberOfRows - 1;
 
             //Получаем все строки            
-            for (var i = 0; i < NumberOfLines; i++) Rows.Add(sheet.GetRow(i));
+            for (var i = 0; i <= NumberOfLines; i++) Rows.Add(sheet.GetRow(i));
             return Rows;
         }
 
