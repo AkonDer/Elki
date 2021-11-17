@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NPOI.XSSF.UserModel;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -8,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using NPOI.XSSF.UserModel;
 using Timer = System.Timers.Timer;
 
 namespace Elki
@@ -28,13 +28,13 @@ namespace Elki
         /// Какая дата сегодня
         /// </summary>
         public static string dataNow;
-        
+
 
 
 
         public Program()
         {
-            
+
         }
 
         private static void Main()
@@ -70,8 +70,8 @@ namespace Elki
                 string HolyData = hd.Cells[0].ToString();
                 List<string> holday = new List<string>();
                 for (int i = 1; i < hd.Cells.Count; i++)
-                {               
-                    holday.Add(hd.Cells[i].ToString());                    
+                {
+                    holday.Add(hd.Cells[i].ToString());
                 }
                 Holidays.Add(new Holiday { Date = HolyData, HolDays = holday });
             }
@@ -93,7 +93,7 @@ namespace Elki
                 });
                 id++;
             }
-          
+
             // Запускаем таймеры в трех потоках
             Thread t1, t2, t3, t4;
 
@@ -143,7 +143,7 @@ namespace Elki
         // Событие, срабатывающее при тике таймера
         private static void OnTimedEventElki(object source, ElapsedEventArgs e)
         {
-            Elki();            
+            Elki();
         }
 
         // Событие, срабатывающее при тике таймера
@@ -182,7 +182,7 @@ namespace Elki
             _aTimerElki.Elapsed += OnTimedEventElki;
             _aTimerElki.AutoReset = true;
             _aTimerElki.Enabled = true;
-        }      
+        }
 
         private static void SetTimerClock()
         {
@@ -192,7 +192,7 @@ namespace Elki
             _aTimerClock.Elapsed += OnTimedEventClock;
             _aTimerClock.AutoReset = true;
             _aTimerClock.Enabled = true;
-        }        
+        }
 
         private static void SetTimerBd()
         {
@@ -292,15 +292,15 @@ namespace Elki
                 g.DrawString(time2, drawFont2, drawBrush, 72, 33, drawFormat);
 
                 b.Save(@"timeelki.bmp", ImageFormat.Bmp);
-                b.Save(@"timeelki2.bmp", ImageFormat.Bmp);               
+                b.Save(@"timeelki2.bmp", ImageFormat.Bmp);
             }
         }
-      
+
         /// <summary>
         ///     Фукция формирует дни рождения
         /// </summary>
         private static void Birthday()
-        {           
+        {
             var numOfLists = 4; // Количество имен на листе            
 
             // Ищем всех людей с соответствующим днем рождения
@@ -375,7 +375,7 @@ namespace Elki
             else _whichlist++;
             Console.WriteLine(_whichlist);
 
-            
+
         }
 
         /// <summary>
@@ -390,7 +390,7 @@ namespace Elki
             {
                 // Create fonts and brush.
                 var drawBrush = new SolidBrush(Color.DarkRed);
-                var drawFont1 = new Font("Arial", 18, FontStyle.Italic);
+                var drawFont1 = new Font("Arial", 18);
                 var drawFont2 = new Font("Arial", 24, FontStyle.Bold);
 
                 // Set format of string.
@@ -407,13 +407,34 @@ namespace Elki
                 // рисуем иконку
                 g.DrawImage(newImage, 0, 0, 362, 512);
 
+                const int characters = 15; // количество символов в строке
+                int numberOfString = 1; // номер текущей строки
+
                 foreach (var hd in holday.HolDays)
                 {
-                    g.DrawString(hd, drawFont1, drawBrush, 33, 50, drawFormat);
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(hd);                    
+                    string[] holArr = hd.ToString().Split(' '); // разбиваем фразу на слова
+                    string str = ""; // текущая строка для печати
+                    int currentWord = 0; // текущее слово в архиве                    
+
+                    for (int i = currentWord; i < holArr.Length; i++)
+                    {
+                        str += holArr[i] + " ";
+                        if (str.Length > characters)
+                        {
+                            g.DrawString(str, drawFont1, drawBrush, 33, numberOfString * 30, drawFormat);
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(str);
+                            Console.ForegroundColor = ConsoleColor.White;
+                            str = "";
+                            numberOfString++;
+                            currentWord = i++;
+                            break;
+                        }
+                       
+                    }
                 }
-                Console.ForegroundColor = ConsoleColor.White;
+
+                
 
                 b.Save(@"hd1.bmp", ImageFormat.Bmp);
                 b.Save(@"hd2.bmp", ImageFormat.Bmp);
@@ -459,8 +480,8 @@ namespace Elki
                 //g.DrawString("IPG Laser", drawFont1, drawBrush, 120, 213, drawFormat);
                 //g.DrawString("Бурбах, Германия", drawFont2, drawBrush, 100, 233, drawFormat);
 
-                
-                
+
+
                 var newImage = Image.FromFile("clock.png");
                 g.DrawImage(newImage, 0, 0, 345, 422);
 
@@ -557,5 +578,5 @@ namespace Elki
         }
     }
 
-    
+
 }
