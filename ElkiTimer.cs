@@ -33,6 +33,10 @@ namespace Elki
                 timer.Elapsed += onTimer;
                 timer.AutoReset = true;
                 timer.Enabled = true;
+
+                Console.ReadLine();
+                timer.Stop();
+                timer.Dispose();
             });
             t.Start();
         }
