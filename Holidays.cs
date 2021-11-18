@@ -12,6 +12,7 @@ namespace Elki
     internal class Holidays : ElkiTimer
     {
         List<Holiday> _holidays = new List<Holiday>();
+
         public Holidays(double dt, string fileName) : base(dt) 
         {
             _holidays = OpenFile(fileName);
@@ -73,6 +74,8 @@ namespace Elki
 
                     }
                 }
+
+                g.DrawString(@"Пробная строка//n Пробная строка", drawFont1, drawBrush, 33, numberOfString * 30, drawFormat);
 
                 b.Save(@"hd1.bmp", ImageFormat.Bmp);
                 b.Save(@"hd2.bmp", ImageFormat.Bmp);
