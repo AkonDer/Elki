@@ -66,6 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Birthdays.cs" />
+    <Compile Include="Clocks.cs" />
+    <Compile Include="ElkiTimer.cs" />
     <Compile Include="Employee.cs" />
     <Compile Include="FileWork.cs" />
     <Compile Include="Holiday.cs" />

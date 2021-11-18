@@ -1,19 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace Elki
 {
+    /// <summary>
+    /// Класс запускает та
+    /// </summary>
     internal class ElkiTimer
     {
-        Thread t;
-        private void SetTimer()
-        {
+        private Thread t;
+        private Timer timer;
+        private double delayTime;
+        protected string _dataNow;
 
+
+        public ElkiTimer(double dt)
+        {
+            delayTime = dt;
+            _dataNow = DateTime.Now.ToString("dd.MM");
+        }       
+
+        protected virtual void onTimer(object source, ElapsedEventArgs e)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Таймер сработал");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public void StartTimer()
+        {
+            t = new Thread(e =>
+            {
+                timer = new Timer(delayTime);
+                timer.Elapsed += onTimer;
+                timer.AutoReset = true;
+                timer.Enabled = true;
+            });
+            t.Start();
         }
     }
-    
+
 }

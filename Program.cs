@@ -39,20 +39,6 @@ namespace Elki
 
             _dataElki = File.ReadAllLines("data.txt");
 
-            //// Переформируем файл с договорняками
-            //var dp = new FileWork("dp.xlsx");
-            //List<Employee> empDp = new List<Employee>();
-            //for (int i = 0; i < dp.Rows.Count; i += 4)
-            //{
-            //    empDp.Add(new Employee()
-            //    {
-            //        Name = dp.Rows[i].Cells[0].ToString(),
-            //        DateOfBirth = dp.Rows[i+1].Cells[0].ToString()
-            //    }); 
-            //}
-
-            // SaveData("wd.xlsx", empDp);
-
             // считываем данные из файла с праздниками
             var fwHolidays = new FileWork("holidays.xlsx");
 
@@ -67,24 +53,16 @@ namespace Elki
                 }
                 Holidays.Add(new Holiday { Date = HolyData, HolDays = holday });
             }
+            
 
-            // считываем из файла данные по дням рождения сотрудников
-            var fw = new FileWork("emp.xlsx");
+            ElkiTimer timer1 = new ElkiTimer(2000);
+            timer1.StartTimer();
 
-            // Создаем List сотрудников для последующего простого поиска соответствий дню рождений в нем и помещаем в глобальный List
-            var id = 0;
-            foreach (var item in fw.Rows)
-            {
-                Employees.Add(new Employee
-                {
-                    Id = id,
-                    Name = item.Cells[0].ToString().Trim() + " " +
-                           item.Cells[1].ToString().Trim() + " " +
-                           item.Cells[2].ToString().Trim(),
-                    DateOfBirth = item.Cells[3].ToString()
-                });
-                id++;
-            }
+            Birthdays timetBD = new Birthdays(5000, "emp.xlsx");
+            timetBD.StartTimer();
+
+            Clocks timerClock = new Clocks(1000);
+            timerClock.StartTimer();
 
             // Запускаем таймеры в трех потоках
             Thread t1, t2, t3, t4;
@@ -97,15 +75,7 @@ namespace Elki
                 _aTimerElki.Dispose();
             });
             t1.Start();
-
-            t2 = new Thread(e =>
-            {
-                SetTimerBd();
-                Console.ReadLine();
-                _aTimerBd.Stop();
-                _aTimerBd.Dispose();
-            });
-            t2.Start();
+            
 
             t3 = new Thread(e =>
             {
@@ -142,13 +112,7 @@ namespace Elki
         private static void OnTimedEventClock(object source, ElapsedEventArgs e)
         {
             Clock();
-        }
-
-        // Событие, срабатывающее при тике таймера
-        private static void OnTimedEventBD(object source, ElapsedEventArgs e)
-        {
-            Birthday();
-        }
+        }       
 
         // Событие, срабатывающее при тике таймера
         private static void OnTimedEventHolidays(object source, ElapsedEventArgs e)
@@ -185,16 +149,7 @@ namespace Elki
             _aTimerClock.AutoReset = true;
             _aTimerClock.Enabled = true;
         }
-
-        private static void SetTimerBd()
-        {
-            // Create a timer with a two second interval.
-            _aTimerBd = new Timer(6000);
-            // Hook up the Elapsed event for the timer. 
-            _aTimerBd.Elapsed += OnTimedEventBD;
-            _aTimerBd.AutoReset = true;
-            _aTimerBd.Enabled = true;
-        }
+               
 
 
         /// <summary>
@@ -288,87 +243,7 @@ namespace Elki
             }
         }
 
-        /// <summary>
-        ///     Фукция формирует дни рождения
-        /// </summary>
-        private static void Birthday()
-        {
-            var numOfLists = 4; // Количество имен на листе            
-
-            // Ищем всех людей с соответствующим днем рождения
-            var emp = Employees.Where(e => e.DateOfBirth.Contains(dataNow));
-            var ebd = new string[50];
-
-            var a = 0;
-            var enumerable = emp.ToList();
-            foreach (var item in enumerable)
-            {
-                ebd[a] = item.Name;
-                a++;
-            }
-
-            _lists = Math.Ceiling(enumerable.ToList().Count / (decimal)numOfLists);
-
-            var start = (int)(_whichlist * numOfLists - numOfLists);
-            var end = enumerable.ToList().Count - _whichlist * numOfLists < 0
-                ? (int)(_whichlist * numOfLists) - numOfLists + enumerable.ToList().Count % numOfLists
-                : (int)_whichlist * numOfLists;
-
-
-            var b = new Bitmap(362, 512);
-            using (var g = Graphics.FromImage(b))
-            {
-                // Create fonts and brush.
-                var drawBrush = new SolidBrush(Color.DarkRed);
-                var drawFont1 = new Font("Arial", 18, FontStyle.Italic);
-                var drawFont2 = new Font("Arial", 24, FontStyle.Bold);
-
-                // Set format of string.
-                var drawFormat = new StringFormat();
-
-                // Рисуем линии
-                //var ePen = new Pen(Color.DarkBlue, 1);
-
-                // Вставляем картинку
-                var newImage = Image.FromFile("fon.jpg");
-
-
-                g.Clear(Color.White);
-
-                // рисуем иконку
-                g.DrawImage(newImage, 0, 0, 362, 512);
-
-                g.DrawString("Наши именинники", drawFont2, drawBrush, 30, 33, drawFormat);
-
-                var index = 1;
-                for (var i = start; i < end; i++)
-                {
-                    var s = ebd[i].Split(' ');
-                    var s1 = $"{s[0]} {s[1]}";
-                    var s2 = $"     {s[2]}";
-                    g.DrawString(s1, drawFont1, drawBrush, 50, index * 55 + 45, drawFormat);
-                    g.DrawString(s2, drawFont1, drawBrush, 50, index * 55 + 67, drawFormat);
-                    Console.WriteLine(ebd[i]);
-                    index++;
-                }
-
-                var drawFont3 = new Font("Arial", 20, FontStyle.Bold);
-                g.DrawString("Поздравляем", drawFont3, drawBrush, 33, 360, drawFormat);
-                g.DrawString("с днем", drawFont3, drawBrush, 33, 390, drawFormat);
-                g.DrawString("рождения!", drawFont3, drawBrush, 33, 420, drawFormat);
-
-                b.Save(@"bd1.bmp", ImageFormat.Bmp);
-                b.Save(@"bd2.bmp", ImageFormat.Bmp);
-            }
-
-
-            // Если это был последний лист то перейти снова к первому
-            if (_whichlist == _lists) _whichlist = 1;
-            else _whichlist++;
-            Console.WriteLine(_whichlist);
-
-
-        }
+        
 
         /// <summary>
         ///  Формирует праздники
@@ -513,62 +388,6 @@ namespace Elki
 
             b.Save(@"clock1.bmp", ImageFormat.Bmp);
             b.Save(@"clock2.bmp", ImageFormat.Bmp);
-        }
-
-
-        public static void SaveData(string fileName, List<Employee> emp)
-        {
-            //Рабочая книга Excel
-            XSSFWorkbook wb;
-            //Лист в книге Excel
-            XSSFSheet sh;
-
-            //Создаем рабочую книгу
-            wb = new XSSFWorkbook();
-            //Создаём лист в книге
-            sh = (XSSFSheet)wb.CreateSheet("Лист 1");
-
-            // Текущая строка
-            var row = 0;
-
-            foreach (var item in emp)
-            {
-                //Создаем строку
-                var currentRow = sh.CreateRow(row);
-                currentRow.CreateCell(0).SetCellValue(item.Name);
-                currentRow.CreateCell(1).SetCellValue(item.DateOfBirth);
-                row++;
-            }
-
-            // Удалим файл если он есть уже
-            if (!File.Exists(fileName)) File.Delete(fileName);
-
-            //запишем всё в файл
-            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
-            {
-                wb.Write(fs);
-            }
-        }
-
-        static void Factorial()
-        {
-            int result = 1;
-            for (int i = 1; i <= 6; i++)
-            {
-                result *= i;
-            }
-            Thread.Sleep(8000);
-            Console.WriteLine($"Факториал равен {result}");
-        }
-
-        // определение асинхронного метода
-        static async void FactorialAsync()
-        {
-            Console.WriteLine("Начало метода FactorialAsync"); // выполняется синхронно
-            await Task.Run(() => Factorial());                // выполняется асинхронно
-            Console.WriteLine("Конец метода FactorialAsync");
-        }
+        }       
     }
-
-
 }
