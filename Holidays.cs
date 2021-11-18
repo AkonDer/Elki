@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace Elki
@@ -13,7 +11,7 @@ namespace Elki
     {
         List<Holiday> _holidays = new List<Holiday>();
 
-        public Holidays(double dt, string fileName) : base(dt) 
+        public Holidays(double dt, string fileName) : base(dt)
         {
             _holidays = OpenFile(fileName);
         }
@@ -48,34 +46,44 @@ namespace Elki
                 // рисуем иконку
                 g.DrawImage(newImage, 0, 0, 362, 512);
 
-                const int characters = 15; // количество символов в строке
+                const int characters = 10; // количество символов в строке
                 int numberOfString = 1; // номер текущей строки
+                string str = ""; // текущая строка для печати
 
-                foreach (var hd in holday.HolDays)
+                List<string> listSpliting = new List<string>();
+
+                foreach (var listHD in holday.HolDays)
                 {
-                    string[] holArr = hd.ToString().Split(' '); // разбиваем фразу на слова
-                    string str = ""; // текущая строка для печати
-                    int currentWord = 0; // текущее слово в архиве                    
+                    string[] split = listHD.Split(' ');
 
-                    for (int i = currentWord; i < holArr.Length; i++)
+                    foreach (var item in split)
                     {
-                        str += holArr[i] + " ";
+                        str = str + item.Trim() + " ";
                         if (str.Length > characters)
                         {
-                            g.DrawString(str, drawFont1, drawBrush, 33, numberOfString * 30, drawFormat);
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine(str);
-                            Console.ForegroundColor = ConsoleColor.White;
+                            listSpliting.Add(str);
                             str = "";
-                            numberOfString++;
-                            currentWord = i++;
-                            break;
+                            continue;
                         }
-
                     }
+                    if (str != "")
+                    {
+                        listSpliting.Add(str);
+                    }
+                    str = "";
                 }
 
-                g.DrawString(@"Пробная строка//n Пробная строка", drawFont1, drawBrush, 33, numberOfString * 30, drawFormat);
+                foreach (var item in listSpliting)
+                {
+                    Console.WriteLine(item.ToString());
+                    g.DrawString(item, drawFont1, drawBrush, 33, numberOfString * 30, drawFormat);
+                    numberOfString++;
+                }
+
+
+                //g.DrawString(item, drawFont1, drawBrush, 33, numberOfString * 30, drawFormat);
+                //numberOfString++;
+
 
                 b.Save(@"hd1.bmp", ImageFormat.Bmp);
                 b.Save(@"hd2.bmp", ImageFormat.Bmp);
@@ -101,8 +109,33 @@ namespace Elki
             }
             return listHoliday;
         }
+
+        List<string> strSplit(string str, int count)
+        {
+            List<string> list = new List<string>();
+            string s = "";
+
+            string[] split = str.Split(' ');
+
+            foreach (var item in split)
+            {
+                str = str + item + " ";
+                if (str.Length > 10)
+                {
+                    list.Add(str);
+                    str = "";
+                    continue;
+                }
+
+            }
+
+            list.Add(str);
+            str = "";
+
+            return list;
+        }
     }
-    
+
     /// <summary>
     /// Праздник
     /// </summary>
