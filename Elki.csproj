@@ -68,10 +68,10 @@
   <ItemGroup>
     <Compile Include="Birthdays.cs" />
     <Compile Include="Clocks.cs" />
+    <Compile Include="Elki.cs" />
     <Compile Include="ElkiTimer.cs" />
-    <Compile Include="Employee.cs" />
     <Compile Include="FileWork.cs" />
-    <Compile Include="Holiday.cs" />
+    <Compile Include="Holidays.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,5 +1,4 @@
-﻿using NPOI.XSSF.UserModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -7,7 +6,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -28,7 +26,7 @@ namespace Elki
         /// Какая дата сегодня
         /// </summary>
         public static string dataNow;
-      
+
         private static void Main()
         {
             dataNow = DateTime.Now.ToString("dd.MM");
@@ -53,16 +51,16 @@ namespace Elki
                 }
                 Holidays.Add(new Holiday { Date = HolyData, HolDays = holday });
             }
-            
 
-            ElkiTimer timer1 = new ElkiTimer(2000);
-            timer1.StartTimer();
+            List<ElkiTimer> timers = new List<ElkiTimer>()
+            {
+                new Birthdays(5000, "emp.xlsx"),
+                new Clocks(1000),
+                new Elki(1000),
+                new Holidays(2000)
+            };
+            foreach (var timer in timers) timer.StartTimer();
 
-            Birthdays timetBD = new Birthdays(5000, "emp.xlsx");
-            timetBD.StartTimer();
-
-            Clocks timerClock = new Clocks(1000);
-            timerClock.StartTimer();
 
             // Запускаем таймеры в трех потоках
             Thread t1, t2, t3, t4;
@@ -75,7 +73,7 @@ namespace Elki
                 _aTimerElki.Dispose();
             });
             t1.Start();
-            
+
 
             t3 = new Thread(e =>
             {
@@ -112,7 +110,7 @@ namespace Elki
         private static void OnTimedEventClock(object source, ElapsedEventArgs e)
         {
             Clock();
-        }       
+        }
 
         // Событие, срабатывающее при тике таймера
         private static void OnTimedEventHolidays(object source, ElapsedEventArgs e)
@@ -149,7 +147,7 @@ namespace Elki
             _aTimerClock.AutoReset = true;
             _aTimerClock.Enabled = true;
         }
-               
+
 
 
         /// <summary>
@@ -243,7 +241,7 @@ namespace Elki
             }
         }
 
-        
+
 
         /// <summary>
         ///  Формирует праздники
@@ -297,11 +295,11 @@ namespace Elki
                             currentWord = i++;
                             break;
                         }
-                       
+
                     }
                 }
 
-                
+
 
                 b.Save(@"hd1.bmp", ImageFormat.Bmp);
                 b.Save(@"hd2.bmp", ImageFormat.Bmp);
@@ -388,6 +386,6 @@ namespace Elki
 
             b.Save(@"clock1.bmp", ImageFormat.Bmp);
             b.Save(@"clock2.bmp", ImageFormat.Bmp);
-        }       
+        }
     }
 }

@@ -13,8 +13,7 @@ namespace Elki
         private Thread t;
         private Timer timer;
         private double delayTime;
-        protected string _dataNow;
-
+        protected string _dataNow; // текущая дата
 
         public ElkiTimer(double dt)
         {
@@ -23,10 +22,7 @@ namespace Elki
         }       
 
         protected virtual void onTimer(object source, ElapsedEventArgs e)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Таймер сработал");
-            Console.ForegroundColor = ConsoleColor.White;
+        {            
         }
 
         public void StartTimer()
