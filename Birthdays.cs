@@ -92,7 +92,6 @@ namespace Elki
                 b.Save(@"bd2.bmp", ImageFormat.Bmp);
             }
 
-
             // Если это был последний лист то перейти снова к первому
             if (_whichlist == _lists) _whichlist = 1;
             else _whichlist++;
@@ -121,5 +120,12 @@ namespace Elki
             }
             return employees;
         }
+    }
+
+    class Employee
+    {
+        public string DateOfBirth;
+        public int Id;
+        public string Name;
     }
 }
