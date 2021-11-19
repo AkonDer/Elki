@@ -21,7 +21,7 @@ namespace Elki
         protected override void onTimer(object source, ElapsedEventArgs e)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Дни рождения");
+            Console.WriteLine($"{DateTime.Now} Дни рождения");
             Console.ForegroundColor = ConsoleColor.White;
 
             var numOfLists = 4; // Количество имен на листе            
@@ -61,7 +61,7 @@ namespace Elki
                 //var ePen = new Pen(Color.DarkBlue, 1);
 
                 // Вставляем картинку
-                var newImage = Image.FromFile("fon.jpg");
+                var newImage = Image.FromFile(@"resources\fon.jpg");
 
 
                 g.Clear(Color.White);
@@ -88,8 +88,8 @@ namespace Elki
                 g.DrawString("с днем", drawFont3, drawBrush, 33, 390, drawFormat);
                 g.DrawString("рождения!", drawFont3, drawBrush, 33, 420, drawFormat);
 
-                b.Save(@"bd1.bmp", ImageFormat.Bmp);
-                b.Save(@"bd2.bmp", ImageFormat.Bmp);
+                b.Save(@"output\bd1.bmp", ImageFormat.Bmp);
+                b.Save(@"output\bd2.bmp", ImageFormat.Bmp);
             }
 
             // Если это был последний лист то перейти снова к первому

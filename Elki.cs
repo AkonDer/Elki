@@ -15,7 +15,7 @@ namespace Elki
         private string[] timesElki;
         public Elki(double dt, string fileName) : base(dt) 
         {
-            timesElki = File.ReadAllLines("data.txt");
+            timesElki = File.ReadAllLines(fileName);
         }
 
         protected override void onTimer(object source, ElapsedEventArgs e)
@@ -42,7 +42,7 @@ namespace Elki
                 var ePen = new Pen(Color.DarkBlue, 1);
 
                 // Вставляем картинку
-                var newImage = Image.FromFile("icon.png");
+                var newImage = Image.FromFile(@"resources\icon.png");
 
                 int i;
 
@@ -98,8 +98,8 @@ namespace Elki
 
                 g.DrawString(time2, drawFont2, drawBrush, 72, 33, drawFormat);
 
-                b.Save(@"timeelki.bmp", ImageFormat.Bmp);
-                b.Save(@"timeelki2.bmp", ImageFormat.Bmp);
+                b.Save(@"output\timeelki.bmp", ImageFormat.Bmp);
+                b.Save(@"output\timeelki2.bmp", ImageFormat.Bmp);
             }
         }
 

@@ -47,7 +47,7 @@ namespace Elki
 
 
 
-                var newImage = Image.FromFile("clock.png");
+                var newImage = Image.FromFile(@"resources\clock.png");
                 g.DrawImage(newImage, 0, 0, 345, 422);
 
 
@@ -84,8 +84,8 @@ namespace Elki
                         (int)(r * 0.75 * Math.Sin(secondAngle * Math.PI / 180) + yCenter + delta)));
             }
 
-            b.Save(@"clock1.bmp", ImageFormat.Bmp);
-            b.Save(@"clock2.bmp", ImageFormat.Bmp);
+            b.Save(@"output\clock1.bmp", ImageFormat.Bmp);
+            b.Save(@"output\clock2.bmp", ImageFormat.Bmp);
         }
        
     }

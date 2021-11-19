@@ -15,7 +15,7 @@ namespace Elki
         {
             _holidays = OpenFile(fileName);
         }
-
+        
         protected override void onTimer(object source, ElapsedEventArgs e)
         {           
             var holday = _holidays.FirstOrDefault(h => h.Date == _dataNow);
@@ -35,7 +35,7 @@ namespace Elki
                 //var ePen = new Pen(Color.DarkBlue, 1);
 
                 // Вставляем картинку
-                var newImage = Image.FromFile("fonHolidays.jpg");
+                var newImage = Image.FromFile(@"resources\fonHolidays.jpg");
 
                 g.Clear(Color.White);
 
@@ -72,7 +72,7 @@ namespace Elki
 
                     foreach (var item in listSpliting)
                     {
-                        // todo добавить время
+                        
                         Console.ForegroundColor = ConsoleColor.Magenta;
                         Console.WriteLine(item.ToString());
                         Console.ForegroundColor = ConsoleColor.White;
@@ -86,8 +86,8 @@ namespace Elki
                     listSpliting.Clear();
                 }
 
-                b.Save(@"hd1.bmp", ImageFormat.Bmp);
-                b.Save(@"hd2.bmp", ImageFormat.Bmp);
+                b.Save(@"output\hd1.bmp", ImageFormat.Bmp);
+                b.Save(@"output\hd2.bmp", ImageFormat.Bmp);
 
             }
         }
@@ -95,7 +95,7 @@ namespace Elki
         {
             List<Holiday> listHoliday = new List<Holiday>();
 
-            var fwHolidays = new FileWork("holidays.xlsx");
+            var fwHolidays = new FileWork(@"resources\holidays.xlsx");
 
             // Создаем список праздников для последующего поиска по нему
             foreach (var hd in fwHolidays.Rows)
