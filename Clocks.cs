@@ -11,11 +11,7 @@ namespace Elki
         public Clocks(double dt) : base(dt) { }
 
         protected override void onTimer(object source, ElapsedEventArgs e)
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("Часы");
-            Console.ForegroundColor = ConsoleColor.White;
-
+        {          
             var xCenter = 233;
             var yCenter = 111;
             var delta = 197;

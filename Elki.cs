@@ -20,10 +20,6 @@ namespace Elki
 
         protected override void onTimer(object source, ElapsedEventArgs e)
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("Электрички");
-            Console.ForegroundColor = ConsoleColor.White;          
-
             double timeNow;
             var time1 = "";
             var time2 = "";

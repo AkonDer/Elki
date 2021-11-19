@@ -9,7 +9,7 @@ namespace Elki
 {
     internal class Holidays : ElkiTimer
     {
-        List<Holiday> _holidays = new List<Holiday>();
+        readonly List<Holiday> _holidays = new List<Holiday>();
 
         public Holidays(double dt, string fileName) : base(dt)
         {
@@ -17,20 +17,16 @@ namespace Elki
         }
 
         protected override void onTimer(object source, ElapsedEventArgs e)
-        {
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("Праздники");
-            Console.ForegroundColor = ConsoleColor.White;
-
+        {           
             var holday = _holidays.FirstOrDefault(h => h.Date == _dataNow);
 
-            var b = new Bitmap(362, 512);
+            var b = new Bitmap(345, 422);
             using (var g = Graphics.FromImage(b))
             {
                 // Create fonts and brush.
-                var drawBrush = new SolidBrush(Color.DarkRed);
-                var drawFont1 = new Font("Arial", 18);
-                var drawFont2 = new Font("Arial", 24, FontStyle.Bold);
+                var drawBrush = new SolidBrush(Color.Blue);
+                var drawFont1 = new Font("Arial", 20);
+                var drawFont2 = new Font("Arial", 23, FontStyle.Bold);                
 
                 // Set format of string.
                 var drawFormat = new StringFormat();
@@ -39,18 +35,20 @@ namespace Elki
                 //var ePen = new Pen(Color.DarkBlue, 1);
 
                 // Вставляем картинку
-                var newImage = Image.FromFile("fon.jpg");
+                var newImage = Image.FromFile("fonHolidays.jpg");
 
                 g.Clear(Color.White);
 
                 // рисуем иконку
-                g.DrawImage(newImage, 0, 0, 362, 512);
+                g.DrawImage(newImage, 0, 0, 345, 422);
 
                 const int characters = 10; // количество символов в строке
-                int numberOfString = 1; // номер текущей строки
+                float numberOfString = 1; // номер текущей строки               
                 string str = ""; // текущая строка для печати
 
                 List<string> listSpliting = new List<string>();
+
+                g.DrawString("СЕГОДНЯ", drawFont2, drawBrush, 95, 25, drawFormat);
 
                 foreach (var listHD in holday.HolDays)
                 {
@@ -71,19 +69,22 @@ namespace Elki
                         listSpliting.Add(str);
                     }
                     str = "";
+
+                    foreach (var item in listSpliting)
+                    {
+                        // todo добавить время
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine(item.ToString());
+                        Console.ForegroundColor = ConsoleColor.White;
+
+                        g.DrawString(item, drawFont1, drawBrush, 33, numberOfString * 30 + 50, drawFormat);
+                        numberOfString++;
+                    }
+
+                    numberOfString += 0.7f;
+
+                    listSpliting.Clear();
                 }
-
-                foreach (var item in listSpliting)
-                {
-                    Console.WriteLine(item.ToString());
-                    g.DrawString(item, drawFont1, drawBrush, 33, numberOfString * 30, drawFormat);
-                    numberOfString++;
-                }
-
-
-                //g.DrawString(item, drawFont1, drawBrush, 33, numberOfString * 30, drawFormat);
-                //numberOfString++;
-
 
                 b.Save(@"hd1.bmp", ImageFormat.Bmp);
                 b.Save(@"hd2.bmp", ImageFormat.Bmp);
@@ -108,32 +109,7 @@ namespace Elki
                 listHoliday.Add(new Holiday { Date = HolyData, HolDays = holday });
             }
             return listHoliday;
-        }
-
-        List<string> strSplit(string str, int count)
-        {
-            List<string> list = new List<string>();
-            string s = "";
-
-            string[] split = str.Split(' ');
-
-            foreach (var item in split)
-            {
-                str = str + item + " ";
-                if (str.Length > 10)
-                {
-                    list.Add(str);
-                    str = "";
-                    continue;
-                }
-
-            }
-
-            list.Add(str);
-            str = "";
-
-            return list;
-        }
+        }        
     }
 
     /// <summary>
