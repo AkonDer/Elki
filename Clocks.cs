@@ -32,20 +32,8 @@ namespace Elki
             using (var g = Graphics.FromImage(b))
             {
                 g.Clear(Color.White);
-                g.SmoothingMode = SmoothingMode.AntiAlias;
 
-                //var drawBrush = new SolidBrush(Color.DarkBlue);
-                //var drawFont1 = new Font("Arial", 16, FontStyle.Bold);
-                //var drawFont2 = new Font("Arial", 12);
-                //var drawFormat = new StringFormat();
-
-                //g.DrawString("IPG Photonics", drawFont1, drawBrush, 100, 5, drawFormat);
-                //g.DrawString("Оксфорд, США", drawFont2, drawBrush, 120, 25, drawFormat);
-
-                //g.DrawString("IPG Laser", drawFont1, drawBrush, 120, 213, drawFormat);
-                //g.DrawString("Бурбах, Германия", drawFont2, drawBrush, 100, 233, drawFormat);
-
-
+                g.SmoothingMode = SmoothingMode.AntiAlias;               
 
                 var newImage = Image.FromFile(@"resources\clock.png");
                 g.DrawImage(newImage, 0, 0, 345, 422);

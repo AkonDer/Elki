@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Timers;
@@ -23,16 +24,15 @@ namespace Elki
             var b = new Bitmap(345, 422);
             using (var g = Graphics.FromImage(b))
             {
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+
                 // Create fonts and brush.
                 var drawBrush = new SolidBrush(Color.Blue);
-                var drawFont1 = new Font("Arial", 20);
-                var drawFont2 = new Font("Arial", 23, FontStyle.Bold);                
+                var drawFont1 = new Font("Arial", 21, FontStyle.Bold);
+                var drawFont2 = new Font("Arial", 26, FontStyle.Bold);                
 
                 // Set format of string.
                 var drawFormat = new StringFormat();
-
-                // Рисуем линии
-                //var ePen = new Pen(Color.DarkBlue, 1);
 
                 // Вставляем картинку
                 var newImage = Image.FromFile(@"resources\fonHolidays.jpg");
@@ -48,7 +48,7 @@ namespace Elki
 
                 List<string> listSpliting = new List<string>();
 
-                g.DrawString("СЕГОДНЯ", drawFont2, drawBrush, 95, 25, drawFormat);
+                g.DrawString("СЕГОДНЯ", drawFont2, drawBrush, 80, 25, drawFormat);
 
                 foreach (var listHD in holday.HolDays)
                 {

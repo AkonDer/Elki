@@ -8,7 +8,7 @@ namespace Elki
     /// <summary>
     /// Класс запускает та
     /// </summary>
-    internal class ElkiTimer
+    abstract class ElkiTimer
     {
         private Thread t;
         private Timer timer;
