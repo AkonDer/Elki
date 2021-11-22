@@ -17,7 +17,7 @@ namespace Elki
             _holidays = OpenFile(fileName);
         }
         
-        protected override void onTimer(object source, ElapsedEventArgs e)
+        protected override void OnTimer(object source, ElapsedEventArgs e)
         {           
             var holday = _holidays.FirstOrDefault(h => h.Date == _dataNow);
 

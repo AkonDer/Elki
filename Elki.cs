@@ -12,13 +12,13 @@ namespace Elki
 {
     internal class Elki : ElkiTimer
     {
-        private string[] timesElki;
+        private readonly string[] timesElki;
         public Elki(double dt, string fileName) : base(dt) 
         {
             timesElki = File.ReadAllLines(fileName);
         }
 
-        protected override void onTimer(object source, ElapsedEventArgs e)
+        protected override void OnTimer(object source, ElapsedEventArgs e)
         {
             double timeNow;
             var time1 = "";
