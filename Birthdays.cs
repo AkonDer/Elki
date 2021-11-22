@@ -8,8 +8,8 @@ using System.Timers;
 namespace Elki
 {
     internal class Birthdays : ElkiTimer
-    {        
-        List<Employee> _employees = new List<Employee>();
+    {
+        readonly List<Employee> _employees = new List<Employee>();
         private decimal _lists;
         private decimal _whichlist = 1;
 
@@ -18,7 +18,7 @@ namespace Elki
             _employees = OpenFile(filename);
         }
 
-        protected override void onTimer(object source, ElapsedEventArgs e)
+        protected override void OnTimer(object source, ElapsedEventArgs e)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{DateTime.Now} Дни рождения");

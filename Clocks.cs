@@ -10,7 +10,7 @@ namespace Elki
     {
         public Clocks(double dt) : base(dt) { }
 
-        protected override void onTimer(object source, ElapsedEventArgs e)
+        protected override void OnTimer(object source, ElapsedEventArgs e)
         {          
             var xCenter = 233;
             var yCenter = 111;
