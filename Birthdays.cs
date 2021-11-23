@@ -20,6 +20,8 @@ namespace Elki
 
         protected override void OnTimer(object source, ElapsedEventArgs e)
         {
+            string _dataNow = DateTime.Now.ToString("dd.MM");
+
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{DateTime.Now} Дни рождения");
             Console.ForegroundColor = ConsoleColor.White;

@@ -12,13 +12,12 @@ namespace Elki
     {
         private Thread t;
         private Timer timer;
-        private readonly double delayTime;
-        protected string _dataNow; // текущая дата
+        private readonly double delayTime;        
 
         public ElkiTimer(double dt)
         {
             delayTime = dt;
-            _dataNow = DateTime.Now.ToString("dd.MM");
+            
         }
 
         protected virtual void OnTimer(object source, ElapsedEventArgs e)
