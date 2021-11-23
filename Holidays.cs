@@ -16,9 +16,10 @@ namespace Elki
         {
             _holidays = OpenFile(fileName);
         }
-        
+
         protected override void OnTimer(object source, ElapsedEventArgs e)
-        {           
+        {
+            string _dataNow = DateTime.Now.ToString("dd.MM");
             var holday = _holidays.FirstOrDefault(h => h.Date == _dataNow);
 
             var b = new Bitmap(345, 422);
@@ -29,7 +30,7 @@ namespace Elki
                 // Create fonts and brush.
                 var drawBrush = new SolidBrush(Color.Blue);
                 var drawFont1 = new Font("Arial", 21, FontStyle.Bold);
-                var drawFont2 = new Font("Arial", 26, FontStyle.Bold);                
+                var drawFont2 = new Font("Arial", 26, FontStyle.Bold);
 
                 // Set format of string.
                 var drawFormat = new StringFormat();
@@ -72,7 +73,7 @@ namespace Elki
 
                     foreach (var item in listSpliting)
                     {
-                        
+
                         Console.ForegroundColor = ConsoleColor.Magenta;
                         Console.WriteLine(item.ToString());
                         Console.ForegroundColor = ConsoleColor.White;
@@ -95,7 +96,7 @@ namespace Elki
         {
             List<Holiday> listHoliday = new List<Holiday>();
 
-            var fwHolidays = new FileWork(@"resources\holidays.xlsx");
+            var fwHolidays = new FileWork(filename);
 
             // Создаем список праздников для последующего поиска по нему
             foreach (var hd in fwHolidays.Rows)
@@ -109,7 +110,7 @@ namespace Elki
                 listHoliday.Add(new Holiday { Date = HolyData, HolDays = holday });
             }
             return listHoliday;
-        }        
+        }
     }
 
     /// <summary>
