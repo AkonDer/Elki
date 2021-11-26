@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -19,6 +20,8 @@ namespace Elki
 
         protected override void OnTimer(object source, ElapsedEventArgs e)
         {
+            Trace.WriteLine($"{DateTime.Now} Праздники");
+
             string _dataNow = DateTime.Now.ToString("dd.MM");
             var holday = _holidays.FirstOrDefault(h => h.Date == _dataNow);
 
@@ -28,8 +31,8 @@ namespace Elki
                 g.SmoothingMode = SmoothingMode.AntiAlias;
 
                 // Create fonts and brush.
-                var drawBrush = new SolidBrush(Color.Blue);
-                var drawFont1 = new Font("Arial", 21, FontStyle.Bold);
+                var drawBrush = new SolidBrush(Color.White);
+                var drawFont1 = new Font("Calibri", 21, FontStyle.Bold);
                 var drawFont2 = new Font("Arial", 26, FontStyle.Bold);
 
                 // Set format of string.
