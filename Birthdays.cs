@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Timers;
+using System.Diagnostics;
 
 namespace Elki
 {
@@ -25,6 +27,7 @@ namespace Elki
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{DateTime.Now} Дни рождения");
             Console.ForegroundColor = ConsoleColor.White;
+            Trace.WriteLine($"{DateTime.Now} Дни рождения");
 
             var numOfLists = 4; // Количество имен на листе            
 
@@ -53,7 +56,7 @@ namespace Elki
             {
                 // Create fonts and brush.
                 var drawBrush = new SolidBrush(Color.DarkRed);
-                var drawFont1 = new Font("Arial", 18, FontStyle.Italic);
+                var drawFont1 = new Font("Arial", 22, FontStyle.Italic);
                 var drawFont2 = new Font("Arial", 24, FontStyle.Bold);
 
                 // Set format of string.
@@ -79,16 +82,16 @@ namespace Elki
                     var s = ebd[i].Split(' ');
                     var s1 = $"{s[0]} {s[1]}";
                     var s2 = $"     {s[2]}";
-                    g.DrawString(s1, drawFont1, drawBrush, 50, index * 55 + 45, drawFormat);
-                    g.DrawString(s2, drawFont1, drawBrush, 50, index * 55 + 67, drawFormat);
+                    g.DrawString(s1, drawFont1, drawBrush, 42, index * 62 + 45, drawFormat);
+                    g.DrawString(s2, drawFont1, drawBrush, 42, index * 62 + 73, drawFormat);
                     Console.WriteLine(ebd[i]);
                     index++;
                 }
 
                 var drawFont3 = new Font("Arial", 20, FontStyle.Bold);
-                g.DrawString("Поздравляем", drawFont3, drawBrush, 33, 360, drawFormat);
-                g.DrawString("с днем", drawFont3, drawBrush, 33, 390, drawFormat);
-                g.DrawString("рождения!", drawFont3, drawBrush, 33, 420, drawFormat);
+                g.DrawString("Поздравляем", drawFont3, drawBrush, 33, 385, drawFormat);
+                g.DrawString("с днем", drawFont3, drawBrush, 33, 415, drawFormat);
+                g.DrawString("рождения!", drawFont3, drawBrush, 33, 445, drawFormat);
 
                 b.Save(@"output\bd1.bmp", ImageFormat.Bmp);
                 b.Save(@"output\bd2.bmp", ImageFormat.Bmp);
