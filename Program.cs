@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using WebScrapper;
 
 namespace Elki
 {
@@ -9,9 +10,14 @@ namespace Elki
     {
         private static void Main()
         {
+            WeatherScrap webScrapper = new WeatherScrap("https://www.gismeteo.ru/weather-fryazino-12648/");
+            webScrapper.RunScrapper();
+            File.WriteAllBytes("image.jpg", webScrapper.Image);
+
             // start pogram
             Console.WriteLine("Start programm in " + DateTime.Now);
-            Trace.Listeners.Add(new TextWriterTraceListener(File.CreateText("log.txt")));
+
+            Trace.Listeners.Add(new TextWriterTraceListener(File.CreateText("log.txt")));  // Логирование работы программы
             Trace.AutoFlush = true;
 
             List<ElkiTimer> timers = new List<ElkiTimer>()

@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Timers;
-using System.Diagnostics;
 
 namespace Elki
 {
@@ -16,7 +15,7 @@ namespace Elki
         private decimal _whichlist = 1;
 
         public Birthdays(double dt, string filename) : base(dt)
-        {           
+        {
             _employees = OpenFile(filename);
         }
 

@@ -46,7 +46,7 @@ namespace Elki
                 // рисуем иконку
                 g.DrawImage(newImage, 0, 0, 345, 422);
 
-                const int characters = 10; // количество символов в строке
+                const int characters = 12; // количество символов в строке
                 float numberOfString = 1; // номер текущей строки               
                 string str = ""; // текущая строка для печати
 
