@@ -10,9 +10,9 @@ namespace Elki
     {
         private static void Main()
         {
-            WeatherScrap webScrapper = new WeatherScrap("https://www.gismeteo.ru/weather-fryazino-12648/");
-            webScrapper.RunScrapper();
-            File.WriteAllBytes("image.jpg", webScrapper.Image);
+            //WeatherScrap webScrapper = new WeatherScrap("https://www.gismeteo.ru/weather-fryazino-12648/");
+            //webScrapper.RunScrapper();
+            //File.WriteAllBytes("image.jpg", webScrapper.Image);
 
             // start pogram
             Console.WriteLine("Start programm in " + DateTime.Now);
