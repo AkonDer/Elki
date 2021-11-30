@@ -8,34 +8,38 @@ namespace Elki
 {
     internal class Clocks : ElkiTimer
     {
-        public Clocks(double dt) : base(dt) { }
+        Image newImage; // фоновое изображение
+
+        public Clocks(double dt) : base(dt) 
+        {
+            newImage = Image.FromFile(@"resources\clock.png");
+        }
 
         protected override void OnTimer(object source, ElapsedEventArgs e)
-        {          
-            var xCenter = 233;
-            var yCenter = 111;
-            var delta = 197;
+        {
+            int xCenter = 233;
+            int yCenter = 111;
+            int delta = 197;
 
 
-            var r = 100;
+            int r = 100;
 
-            var second = DateTime.Now.Second;
-            var minute = DateTime.Now.Minute;
-            var hour = DateTime.Now.Hour;
+            int second = DateTime.Now.Second;
+            int minute = DateTime.Now.Minute;
+            int hour = DateTime.Now.Hour;
 
-            var secondAngle = second * 6 - 90;
-            var minuteAngle = minute * 6 - 90;
-            var hourAngleOx = (int)(Math.Round((hour - 7 + minute / 60.0) * 30) - 90);
-            var hourAngleBur = (int)(Math.Round((hour - 2 + minute / 60.0) * 30) - 90);
+            int secondAngle = second * 6 - 90;
+            int minuteAngle = minute * 6 - 90;
+            int hourAngleOx = (int)(Math.Round((hour - 7 + minute / 60.0) * 30) - 90);
+            int hourAngleBur = (int)(Math.Round((hour - 2 + minute / 60.0) * 30) - 90);
 
-            var b = new Bitmap(345, 422);
-            using (var g = Graphics.FromImage(b))
+            Bitmap b = new Bitmap(345, 422);
+            using (Graphics g = Graphics.FromImage(b))
             {
                 g.Clear(Color.White);
 
-                g.SmoothingMode = SmoothingMode.AntiAlias;               
-
-                var newImage = Image.FromFile(@"resources\clock.png");
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                
                 g.DrawImage(newImage, 0, 0, 345, 422);
 
 

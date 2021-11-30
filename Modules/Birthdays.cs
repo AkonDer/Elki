@@ -13,60 +13,59 @@ namespace Elki
         readonly List<Employee> _employees = new List<Employee>();
         private decimal _lists;
         private decimal _whichlist = 1;
+        readonly int numOfLists = 4; // Количество имен на листе  
+        string[] ebd; // люди у которых сегодня день рождения
+        List<Employee> emp;
+        Image newImage; // фоновая картинка
 
         public Birthdays(double dt, string filename) : base(dt)
         {
             _employees = OpenFile(filename);
+            
+            newImage = Image.FromFile(@"resources\fon.jpg");
         }
 
         protected override void OnTimer(object source, ElapsedEventArgs e)
-        {
-            string _dataNow = DateTime.Now.ToString("dd.MM");
-
+        {     
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"{DateTime.Now} Дни рождения");
             Console.ForegroundColor = ConsoleColor.White;
-            Trace.WriteLine($"{DateTime.Now} Дни рождения");
 
-            var numOfLists = 4; // Количество имен на листе            
-
+            Trace.WriteLine($"{DateTime.Now} Дни рождения");  
+            
             // Ищем всех людей с соответствующим днем рождения
-            var emp = _employees.Where(em => em.DateOfBirth.Contains(_dataNow));
-            var ebd = new string[50];
+            emp = _employees.Where(em => em.DateOfBirth.Contains(_dataNow)).ToList();
 
-            var a = 0;
-            var enumerable = emp.ToList();
-            foreach (var item in enumerable)
+            ebd = new string[50];
+            int a = 0;
+           
+            foreach (var item in emp)
             {
                 ebd[a] = item.Name;
                 a++;
             }
 
-            _lists = Math.Ceiling(enumerable.ToList().Count / (decimal)numOfLists);
+            _lists = Math.Ceiling(emp.Count / (decimal)numOfLists);
 
-            var start = (int)(_whichlist * numOfLists - numOfLists);
-            var end = enumerable.ToList().Count - _whichlist * numOfLists < 0
-                ? (int)(_whichlist * numOfLists) - numOfLists + enumerable.ToList().Count % numOfLists
+            int start = (int)(_whichlist * numOfLists - numOfLists);
+            int end = emp.Count - _whichlist * numOfLists < 0
+                ? (int)(_whichlist * numOfLists) - numOfLists + emp.Count % numOfLists
                 : (int)_whichlist * numOfLists;
 
 
-            var b = new Bitmap(362, 512);
-            using (var g = Graphics.FromImage(b))
+            Bitmap b = new Bitmap(362, 512);
+            using (Graphics g = Graphics.FromImage(b))
             {
                 // Create fonts and brush.
-                var drawBrush = new SolidBrush(Color.DarkRed);
-                var drawFont1 = new Font("Arial", 22, FontStyle.Italic);
-                var drawFont2 = new Font("Arial", 24, FontStyle.Bold);
+                SolidBrush drawBrush = new SolidBrush(Color.DarkRed);
+                Font drawFont1 = new Font("Arial", 22, FontStyle.Italic);
+                Font drawFont2 = new Font("Arial", 24, FontStyle.Bold);
 
                 // Set format of string.
                 var drawFormat = new StringFormat();
 
                 // Рисуем линии
-                //var ePen = new Pen(Color.DarkBlue, 1);
-
-                // Вставляем картинку
-                var newImage = Image.FromFile(@"resources\fon.jpg");
-
+                //var ePen = new Pen(Color.DarkBlue, 1);               
 
                 g.Clear(Color.White);
 
@@ -75,19 +74,19 @@ namespace Elki
 
                 g.DrawString("Наши именинники", drawFont2, drawBrush, 30, 33, drawFormat);
 
-                var index = 1;
-                for (var i = start; i < end; i++)
+                int index = 1;
+                for (int i = start; i < end; i++)
                 {
-                    var s = ebd[i].Split(' ');
-                    var s1 = $"{s[0]} {s[1]}";
-                    var s2 = $"     {s[2]}";
+                    string[] s = ebd[i].Split(' ');
+                    string s1 = $"{s[0]} {s[1]}";
+                    string s2 = $"     {s[2]}";
                     g.DrawString(s1, drawFont1, drawBrush, 42, index * 62 + 45, drawFormat);
                     g.DrawString(s2, drawFont1, drawBrush, 42, index * 62 + 73, drawFormat);
                     Console.WriteLine(ebd[i]);
                     index++;
                 }
 
-                var drawFont3 = new Font("Arial", 20, FontStyle.Bold);
+                Font drawFont3 = new Font("Arial", 20, FontStyle.Bold);
                 g.DrawString("Поздравляем", drawFont3, drawBrush, 33, 385, drawFormat);
                 g.DrawString("с днем", drawFont3, drawBrush, 33, 415, drawFormat);
                 g.DrawString("рождения!", drawFont3, drawBrush, 33, 445, drawFormat);
@@ -127,9 +126,9 @@ namespace Elki
     }
 
     class Employee
-    {
-        public string DateOfBirth;
+    {        
         public int Id;
+        public string DateOfBirth;
         public string Name;
     }
 }

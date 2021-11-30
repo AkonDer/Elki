@@ -13,33 +13,33 @@ namespace Elki
     {
         readonly List<Holiday> _holidays = new List<Holiday>();
 
+        Image newImage; // Фоновая картинка
+
         public Holidays(double dt, string fileName) : base(dt)
         {
             _holidays = OpenFile(fileName);
+            
+            newImage = Image.FromFile(@"resources\fonHolidays.jpg");
         }
 
         protected override void OnTimer(object source, ElapsedEventArgs e)
         {
             Trace.WriteLine($"{DateTime.Now} Праздники");
 
-            string _dataNow = DateTime.Now.ToString("dd.MM");
-            var holday = _holidays.FirstOrDefault(h => h.Date == _dataNow);
+            Holiday holday = _holidays.FirstOrDefault(h => h.Date == _dataNow);
 
-            var b = new Bitmap(345, 422);
-            using (var g = Graphics.FromImage(b))
+            Bitmap b = new Bitmap(345, 422);
+            using (Graphics g = Graphics.FromImage(b))
             {
                 g.SmoothingMode = SmoothingMode.AntiAlias;
 
                 // Create fonts and brush.
-                var drawBrush = new SolidBrush(Color.White);
-                var drawFont1 = new Font("Calibri", 21, FontStyle.Bold);
-                var drawFont2 = new Font("Arial", 26, FontStyle.Bold);
+                SolidBrush drawBrush = new SolidBrush(Color.White);
+                Font drawFont1 = new Font("Calibri", 21, FontStyle.Bold);
+                Font drawFont2 = new Font("Arial", 26, FontStyle.Bold);
 
                 // Set format of string.
-                var drawFormat = new StringFormat();
-
-                // Вставляем картинку
-                var newImage = Image.FromFile(@"resources\fonHolidays.jpg");
+                StringFormat drawFormat = new StringFormat();                
 
                 g.Clear(Color.White);
 
@@ -54,7 +54,7 @@ namespace Elki
 
                 g.DrawString("СЕГОДНЯ", drawFont2, drawBrush, 80, 25, drawFormat);
 
-                foreach (var listHD in holday.HolDays)
+                foreach (string listHD in holday.HolDays)
                 {
                     string[] split = listHD.Split(' ');
 
@@ -99,7 +99,7 @@ namespace Elki
         {
             List<Holiday> listHoliday = new List<Holiday>();
 
-            var fwHolidays = new FileWork(filename);
+            FileWork fwHolidays = new FileWork(filename);
 
             // Создаем список праздников для последующего поиска по нему
             foreach (var hd in fwHolidays.Rows)

@@ -13,36 +13,37 @@ namespace Elki
     internal class Elki : ElkiTimer
     {
         private readonly string[] timesElki;
+        double timeNow;
+        Image _newImage; // Изображение иконки
         public Elki(double dt, string fileName) : base(dt) 
         {
             timesElki = File.ReadAllLines(fileName);
+            
+            _newImage = Image.FromFile(@"resources\icon.png");
         }
 
         protected override void OnTimer(object source, ElapsedEventArgs e)
         {
-            double timeNow;
-            var time1 = "";
-            var time2 = "";
-            var time3 = "";
+
+            string time1 = "";
+            string time2 = "";
+            string time3 = "";
 
             double time;
 
-            var b = new Bitmap(170, 100);
-            using (var g = Graphics.FromImage(b))
+            Bitmap b = new Bitmap(170, 100);
+            using (Graphics g = Graphics.FromImage(b))
             {
                 // Create fonts and brush.
-                var drawBrush = new SolidBrush(Color.DarkBlue);
-                var drawFont1 = new Font("Arial", 18);
-                var drawFont2 = new Font("Arial", 24, FontStyle.Bold);
+                SolidBrush drawBrush = new SolidBrush(Color.DarkBlue);
+                Font drawFont1 = new Font("Arial", 18);
+                Font drawFont2 = new Font("Arial", 24, FontStyle.Bold);
 
                 // Set format of string.
-                var drawFormat = new StringFormat();
+                StringFormat drawFormat = new StringFormat();
 
                 // Рисуем линии
-                var ePen = new Pen(Color.DarkBlue, 1);
-
-                // Вставляем картинку
-                var newImage = Image.FromFile(@"resources\icon.png");
+                Pen ePen = new Pen(Color.DarkBlue, 1);               
 
                 int i;
 
@@ -86,7 +87,7 @@ namespace Elki
                 g.Clear(Color.White);
 
                 // рисуем иконку
-                g.DrawImage(newImage, 0, 5, 85, 85);
+                g.DrawImage(_newImage, 0, 5, 85, 85);
 
                 // рисуем линии
                 g.DrawLine(ePen, 78, 34, 160, 34);
