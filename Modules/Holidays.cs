@@ -24,6 +24,7 @@ namespace Elki
 
         protected override void OnTimer(object source, ElapsedEventArgs e)
         {
+            _dataNow = DateTime.Now.ToString("dd.MM");
             Trace.WriteLine($"{DateTime.Now} Праздники");
 
             Holiday holday = _holidays.FirstOrDefault(h => h.Date == _dataNow);

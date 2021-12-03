@@ -23,8 +23,7 @@ namespace Elki
 
         public ElkiTimer(double dt)
         {
-            delayTime = dt;
-            _dataNow = DateTime.Now.ToString("dd.MM");
+            delayTime = dt;              
         }
 
         protected virtual void OnTimer(object source, ElapsedEventArgs e)
