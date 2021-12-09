@@ -37,7 +37,7 @@ namespace Elki
                 timer = new Timer(delayTime);
                 timer.Elapsed += OnTimer;
                 timer.AutoReset = true;
-                timer.Enabled = true;
+                timer.Enabled = true;               
 
                 Console.ReadLine();
                 timer.Stop();

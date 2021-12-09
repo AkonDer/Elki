@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="Modules\Birthdays.cs" />
     <Compile Include="Modules\Clocks.cs" />
+    <Compile Include="Modules\NewYear.cs" />
     <Compile Include="Modules\Elki.cs" />
     <Compile Include="ElkiTimer.cs" />
     <Compile Include="FileWork.cs" />
